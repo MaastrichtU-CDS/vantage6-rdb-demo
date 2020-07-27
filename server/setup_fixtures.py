@@ -48,7 +48,7 @@ nodeMaastro = db.Node(
     name = f"MAASTRO Node - Collaboration {collaboration.name}",
     organization = maastro,
     collaboration = collaboration,
-    api_key = str(uuid1())
+    api_key = "2bb02b20-d035-11ea-9365-0242ac110002"#str(uuid1())
 )
 
 nodeMaastro.save()
@@ -58,7 +58,7 @@ nodeMumc = db.Node(
     name = f"MUMC Node - Collaboration {collaboration.name}",
     organization = mumc,
     collaboration = collaboration,
-    api_key = str(uuid1())
+    api_key = "414a303e-d035-11ea-9365-0242ac110002"#str(uuid1())
 )
 
 nodeMumc.save()
