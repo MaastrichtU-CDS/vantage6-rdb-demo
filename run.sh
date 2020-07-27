@@ -3,6 +3,7 @@ touch server/default.sqlite
 
 docker run -d \
     --name vantage6_server \
+    --restart unless-stopped \
     -p 5000:5000 \
     -e "VANTAGE6_DB_URI=sqlite:////default.sqlite" \
     -e "PROXY_SERVER_PORT=80" \
