@@ -2,7 +2,7 @@ application:
     api_key: 2bb02b20-d035-11ea-9365-0242ac110002
     api_path: /api
     databases:
-        default: http://sparql.cancerdata.org/namespace/pbdw_site_1/sparql/pbdw_site_1/sparql
+        default: http://sparql.cancerdata.org/namespace/pbdw_site_1/sparql
     encryption:
         enabled: false
         private_key: ''

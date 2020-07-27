@@ -1,0 +1,24 @@
+application:
+    api_key: 414a303e-d035-11ea-9365-0242ac110002
+    api_path: /api
+    databases:
+        default: http://sparql.cancerdata.org/namespace/pbdw_site_2/sparql
+    encryption:
+        enabled: false
+        private_key: ''
+    logging:
+        backup_count: 5
+        datefmt: '%Y-%m-%d %H:%M:%S'
+        file: mumc_test.log
+        format: '%(asctime)s - %(name)-14s - %(levelname)-8s - %(message)s'
+        level: DEBUG
+        max_size: 1024
+        use_console: true
+    port: '5000'
+    server_url: http://vantage6_server
+    task_dir: tasks
+    environments:
+    acc: {}
+    dev: {}
+    prod: {}
+    test: {}
