@@ -2,7 +2,7 @@ datavolume_name="datavol-maastro"
 
 docker volume create $datavolume_name
 
-docker run -it --rm \
+docker run -d \
     --name "vantage6_maastro" \
     --restart unless-stopped \
     -e DATA_VOLUME_NAME="$datavolume_name" \
