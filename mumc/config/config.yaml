@@ -2,7 +2,7 @@ application:
     api_key: 414a303e-d035-11ea-9365-0242ac110002
     api_path: /api
     databases:
-        default: http://sparql.cancerdata.org/namespace/pbdw_site_2/sparql
+        default: /mnt/data/Clinical2.csv
     encryption:
         enabled: false
         private_key: ''
