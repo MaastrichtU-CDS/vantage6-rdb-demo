@@ -24,12 +24,12 @@ mumc.save()
 # create the new users
 new_user = db.User(
     username="johan",
-    password="1234",
     firstname="Johan", 
     lastname="van Soest", 
     roles="researcher",
     organization=maastro
 )
+new_user.set_password("1234")
 
 # store the user in the database
 new_user.save()
