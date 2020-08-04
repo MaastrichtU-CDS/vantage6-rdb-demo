@@ -2,7 +2,7 @@ application:
     api_key: 414a303e-d035-11ea-9365-0242ac110002
     api_path: /api
     databases:
-        default: /mnt/data/Clinical2.csv
+        default: /mnt/database.csv
     encryption:
         enabled: false
         private_key: ''
