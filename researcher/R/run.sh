@@ -1,1 +1,5 @@
-docker run -ti --rm r-base /bin/sh
+docker build -t renv ./
+
+docker run -it --rm \
+    -v $(pwd)/test.r:/test.r \
+    renv
