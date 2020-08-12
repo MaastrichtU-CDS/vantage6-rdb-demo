@@ -1,78 +1,48 @@
-""" Researcher (polling, no websocket and no central container)
-
-Example on how the researcher should initialize a task without using
-the central container. This means that the central part of the
-algorithm needs to be executed on the machine of the researcher.
-
-For simplicity this example also uses polling to obtain the results.
-A more advanced example shows how to obtain the results using websockets
-
-The researcher has to execute the following steps:
-1) Authenticate to the central-server
-2) Prepare the input for the algorithm
-3) Post a new task to a collaboration on the central server
-4) Wait for all results to finish (polling)
-5) Obtain the results
-6) Optionally do some central processing
-"""
+from vantage6.client import Client
+from pathlib import Path
 import time
 
-from vantage6.client import Client
-
-# 1. authenticate to the central server
-client = Client(
-    host="http://localhost",
-    port=5000,
-    path="/api"
-)
+print("Attempt login to Vantage6 API")
+client = Client("http://localhost", 5000, "/api")
 client.authenticate("johan", "1234")
+
 client.setup_encryption(None)
 
-# 2. Prepare input for the dsummary Docker image (algorithm)
 input_ = {
-    "method": "summary",
-    "args": [],
-    "database": "default",
-    "kwargs": {
-        "decimal": ".",
-        "seperator": ",",
-        "columns": {
-            "Age": "Int64",
+    "master": "true",
+    "method":"master", 
+    "args": [
+        {
+            "ID":"Int64",
+            "Age":"Int64", 
+            "Clinical.T.Stage":"category", 
+            "Clinical.N.Stage":"category",
+            "Clinical.M.Stage": "category",
+            "Overall.Ajcc.Stage": "category",
+            "Histology": "category",
             "Sex": "category",
-            "Clinical.T.Stage": "category",
-            "Clinical.N.Stage": "category",
-            "Clinical.M.Stage": "category"
-        }
-    }
+            "Survival.Time.Days": "Int64",
+            "deadstatus.event": "Int64"}, 
+        ".",
+        ";"], 
+    "kwargs": {}
 }
 
-# post the task to the server
+print("Requesting to execute summary algorithm")
 task = client.post_task(
-    name="summary",
+    name="testing",
     image="harbor.vantage6.ai/algorithms/summary",
     collaboration_id=1,
-    input_=input_
+    input_= input_,
+    organization_ids=[1, 2]
 )
 
-# poll for results
-task_id = task.get("id")
-print(f"task id={task_id}")
-
-# check if the task is finished
-task = client.request(f"task/{task_id}")
-while not task.get("complete"):
-    task = client.request(f"task/{task_id}")
-    print("Waiting for results...")
-    time.sleep(1)
-
-# obtain the finished results
-results = client.get_results(task_id=task.get("id"))
-
-# Do some stuff with the results ...
-
-# e.g. print the results per node
-for result in results:
-    node_id = result.get("node")
-    print("-"*80)
-    print(f"Results from node = {node_id}")
-    print(result.get("result"))
+print("Wait and fetch results")
+res = client.get_results(task_id=task.get("id"))
+attempts=1
+while((res[0]["result"] == None) and attempts < 7):
+    print("waiting...")
+    time.sleep(5)
+    res = client.get_results(task_id=task.get("id"))
+    attempts += 1
+print(res[0]["result"])
