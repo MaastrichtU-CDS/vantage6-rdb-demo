@@ -1,2 +1,2 @@
-docker stop vantage6_maastro
-docker rm vantage6_maastro
+docker stop vantage6-maastro-user
+docker rm vantage6-maastro-user

@@ -1,2 +1,2 @@
-docker stop vantage6_mumc
-docker rm vantage6_mumc
+docker stop vantage6-mumc-user
+docker rm vantage6-mumc-user
