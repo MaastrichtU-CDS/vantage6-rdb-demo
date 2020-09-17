@@ -2,6 +2,8 @@
 
 **This repository is still work-in-progress, please note that the documentation may be incomplete**
 
+A video of this repository can be found at [https://vimeo.com/459005703](https://vimeo.com/459005703)
+
 ## How to run this infrastructure?
 
 ### The quick method
