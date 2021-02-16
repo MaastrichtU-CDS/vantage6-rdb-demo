@@ -13,4 +13,4 @@ docker run -d \
     -v $(pwd)/data/Clinical2.csv:/database.csv \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --link vantage6_server \
-    harbor.distributedlearning.ai/infrastructure/node vnode-local start -c /mnt/config/mumc.yaml --dockerized
+    harbor.distributedlearning.ai/infrastructure/node:1.0.0 vnode-local start -c /mnt/config/mumc.yaml --dockerized

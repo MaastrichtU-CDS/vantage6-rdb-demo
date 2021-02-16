@@ -9,4 +9,4 @@ docker run -d \
     -v "$(pwd)/containerFiles/config.yaml:/config.yaml" \
     -v "$(pwd)/containerFiles/default.sqlite:/default.sqlite" \
     -v "/var/run/docker.sock:/var/run/docker.sock" \
-    harbor.vantage6.ai/infrastructure/server vserver-local start -c /config.yaml
+    harbor.vantage6.ai/infrastructure/server:1.0.0 vserver-local start -c /config.yaml
