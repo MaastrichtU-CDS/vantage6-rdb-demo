@@ -5,16 +5,16 @@ environments:
   prod:
     allow_drop_all: 'True'
     api_path: /api
-    description: Demo server for Johan
+    description: Vantage6 Server
     ip: 0.0.0.0
     logging:
       backup_count: 5
       datefmt: '%Y-%m-%d %H:%M:%S'
-      file: johan_demo.log
+      file: server_logs.log
       format: '%(asctime)s - %(name)-14s - %(levelname)-8s - %(message)s'
       level: DEBUG
       max_size: 1024
       use_console: true
     port: '5000'
-    uri: sqlite:///server.sqlite
+    uri: postgres://db
   test: {}

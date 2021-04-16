@@ -4,7 +4,7 @@ import time
 
 print("Attempt login to Vantage6 API")
 client = Client("http://localhost", 5000, "/api")
-client.authenticate("johan", "1234")
+client.authenticate("researcher", "password")
 
 client.setup_encryption(None)
 

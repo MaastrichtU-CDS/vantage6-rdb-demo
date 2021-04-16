@@ -1,11 +1,7 @@
-cd ./server/
-git checkout -- containerFiles/default.sqlite
-sh run.sh
+docker volume create datavol-mumc
+docker volume create datavol-maastro
 
-cd ../maastro/
-sh run.sh
+docker-compose -f docker-compose.yml up -d
 
-cd ../mumc/
-sh run.sh
-
-cd ../researcher/python
+sleep 5s
+docker exec -it vantage6_server vserver-local import -c /config.yaml /init.yaml

@@ -1,2 +1,0 @@
-docker stop vantage6_server
-docker rm vantage6_server

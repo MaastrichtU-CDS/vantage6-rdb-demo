@@ -23,8 +23,8 @@ mumc.save()
 
 # create the new users
 new_user = db.User(
-    username="johan",
-    firstname="Johan", 
+    username="researcher",
+    firstname="Researcher", 
     lastname="van Soest", 
     roles="researcher",
     organization=maastro

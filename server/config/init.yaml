@@ -1,0 +1,36 @@
+organizations:
+  -
+    name: "MAASTRO Clinic"
+    domain: "maastro.nl"
+    address1: "Dr. Tanslaan 12"
+    address2: "Maastricht"
+    zipcode: "6229ET"
+    country: "Netherlands"
+    public_key: ""
+    users:
+      -
+        username: "researcher"
+        firstname: "Researcher"
+        lastname: ""
+        email: "researcher@maastro.nl"
+        password: "password"
+  -
+    name: "Maastricht University Medical Center"
+    domain: "mumc.nl"
+    address1: "Dr. Tanslaan 12"
+    address2: "Maastricht"
+    zipcode: "6229ET"
+    country: "Netherlands"
+    public_key: ""
+
+collaborations:
+  -
+    name: "demo-maastro-mumc"
+    encrypted: False
+    participants:
+      -
+        name: "MAASTRO Clinic"
+        api-key: "2bb02b20-d035-11ea-9365-0242ac110002"
+      -
+        name: "Maastricht University Medical Center"
+        api-key: "414a303e-d035-11ea-9365-0242ac110002"
