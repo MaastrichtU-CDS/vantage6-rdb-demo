@@ -1,4 +1,4 @@
-from uuid import uuid1
+#from uuid import uuid1
 
 # create a second organization to collaborate with
 maastro = db.Organization(
@@ -25,11 +25,11 @@ mumc.save()
 new_user = db.User(
     username="researcher",
     firstname="Researcher", 
-    lastname="van Soest", 
+    lastname="van Maastro", 
     roles="researcher",
     organization=maastro
 )
-new_user.set_password("1234")
+new_user.set_password("password")
 
 # store the user in the database
 new_user.save()
@@ -52,7 +52,7 @@ nodeMaastro = db.Node(
 )
 
 nodeMaastro.save()
-print("api Maastro: %s" % nodeMaastro.api_key)
+#print("api Maastro: %s" % nodeMaastro.api_key)
 
 nodeMumc = db.Node(
     name = f"MUMC Node - Collaboration {collaboration.name}",
@@ -62,4 +62,4 @@ nodeMumc = db.Node(
 )
 
 nodeMumc.save()
-print("api MUMC: %s" % nodeMumc.api_key)
+#print("api MUMC: %s" % nodeMumc.api_key)

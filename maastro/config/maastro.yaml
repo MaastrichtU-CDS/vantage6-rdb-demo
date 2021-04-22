@@ -5,7 +5,7 @@ application:
         default: /mnt/database.csv
     encryption:
         enabled: false
-        private_key: ''
+        # private_key: /mnt/config/private_key.pem
     logging:
         backup_count: 5
         datefmt: '%Y-%m-%d %H:%M:%S'

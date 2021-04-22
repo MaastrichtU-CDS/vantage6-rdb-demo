@@ -7,6 +7,9 @@ services:
     environment:
       POSTGRES_DB: ServerDB
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
+    volumes:
+      - $PWD/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - $PWD/db/data:/mnt/data
     networks:
       - vantage6_server
 
@@ -34,6 +37,7 @@ services:
     volumes:
       - $PWD/server/config/config.yaml:/config.yaml
       - $PWD/server/config/init.yaml:/init.yaml
+      - $PWD/utils/fixture.py:/vantage6/vantage6-server/vantage6/server/controller/fixture.py
       - /var/run/docker.sock:/var/run/docker.sock
     entrypoint: ["vserver-local", "start", "-c", "/config.yaml", "-e", "prod"]
     networks:
@@ -42,51 +46,49 @@ services:
     depends_on:
       - db
 
-  # maastro-user:
-  #   container_name: vantage6-maastro-user
-  #   image: harbor.distributedlearning.ai/infrastructure/node:2.1.1
-  #   environment:
-  #     - DATA_VOLUME_NAME=datavol-maastro
-  #     - PGUSER=postgres
-  #     - PGPASSWORD=${POSTGRES_PASSWORD:-password}
-  #     - PGDATABASE=MaastroDB
-  #     - PGPORT=5432
-  #     - PGHOST=db
-  #   volumes:
-  #     - datavol-maastro:/mnt/data
-  #     - $PWD/maastro/log:/mnt/log
-  #     - $PWD/maastro/config:/mnt/config
-  #     - $PWD/maastro/data/Clinical1.csv:/database.csv
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   entrypoint: ["vnode-local", "start", "-c", "/mnt/config/maastro.yaml", "--dockerized"]
-  #   networks:
-  #     - vantage6_server
-  #   depends_on: 
-  #     - server
-  #   restart: unless-stopped
+  maastro-user:
+    container_name: vantage6-maastro-user
+    image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
+    environment:
+      - DATA_VOLUME_NAME=datavol-maastro
+      - PGUSER=postgres
+      - PGPASSWORD=${POSTGRES_PASSWORD:-password}
+      - PGDATABASE=MaastroDB
+      - PGPORT=5432
+      - PGHOST=db
+    volumes:
+      - datavol-maastro:/mnt/data
+      - $PWD/maastro/log:/mnt/log
+      - $PWD/maastro/config:/mnt/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["vnode-local", "start", "-c", "/mnt/config/maastro.yaml", "--dockerized"]
+    networks:
+      - vantage6_server
+    depends_on: 
+      - server
+    restart: unless-stopped
 
-  # mumc-user:
-  #   container_name: vantage6-mumc-user
-  #   image: harbor.distributedlearning.ai/infrastructure/node:2.1.1
-  #   environment:
-  #     - DATA_VOLUME_NAME=datavol-mumc
-  #     - PGUSER=postgres
-  #     - PGPASSWORD=${POSTGRES_PASSWORD:-password}
-  #     - PGDATABASE=MumcDB
-  #     - PGPORT=5432
-  #     - PGHOST=db
-  #   volumes:
-  #     - datavol-mumc:/mnt/data
-  #     - $PWD/mumc/log:/mnt/log
-  #     - $PWD/mumc/config:/mnt/config
-  #     - $PWD/mumc/data/Clinical2.csv:/database.csv
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   entrypoint: ["vnode-local", "start", "-c", "/mnt/config/mumc.yaml", "--dockerized"]
-  #   networks:
-  #     - vantage6_server
-  #   depends_on: 
-  #     - server
-  #   restart: unless-stopped
+  mumc-user:
+    container_name: vantage6-mumc-user
+    image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
+    environment:
+      - DATA_VOLUME_NAME=datavol-mumc
+      - PGUSER=postgres
+      - PGPASSWORD=${POSTGRES_PASSWORD:-password}
+      - PGDATABASE=MumcDB
+      - PGPORT=5432
+      - PGHOST=db
+    volumes:
+      - datavol-mumc:/mnt/data
+      - $PWD/mumc/log:/mnt/log
+      - $PWD/mumc/config:/mnt/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["vnode-local", "start", "-c", "/mnt/config/mumc.yaml", "--dockerized"]
+    networks:
+      - vantage6_server
+    depends_on: 
+      - server
+    restart: unless-stopped
 
 volumes:
   datavol-maastro:

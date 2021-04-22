@@ -1,29 +1,34 @@
-# Vantage6 Docker Demo
+# Vantage6 RDB Demo
 
-**This repository is still work-in-progress, please note that the documentation may be incomplete**
+Demo to explore the Vantage6 framework using a relational database to store the node's data.
 
-A video of this repository can be found at [https://vimeo.com/459005703](https://vimeo.com/459005703)
+## Usage
 
-## How to run this infrastructure?
+### Spin up the infrastructure
 
-### The quick method
-Run the file [start_all.sh](start_all.sh) by executing `sh start_all.sh`
+Run the following command `sh start_all.sh` to:
+- create the necessary docker volumes
+- run the docker-compose file
+- set-up the server database
 
-### the elaborate method
-1. Clone this repository on your local machine (using `git clone https://gitlab.com/UM-CDS/pht/vantage6-docker-demo.git`)
-2. Go to the [/server](/server) folder, and execute `sh run.sh`
-3. Go to the [/maastro](/server) folder, and execute `sh run.sh`
-4. Go to the [/mumc](/server) folder, and execute `sh run.sh`
+The docker-compose file will create:
+- a container running a postgres database
+- a container running a database manager accessible on `localhost:8080`
+- the server and two nodes
 
-## How to run this as a researcher?
+The docker-compose can be modified to any specific need e.g. having additional nodes.
 
-### In Python
+### Client
+
+After successfully starting the services, the vantage6 client can be used to interact with the server.
+
+### Example in Python
 1. Go to the folder [/researcher/python](/researcher/python)
 2. Execute `sh run.sh`
 
 The run.py file contains the actual code as a researcher to execute a train on the infrastructure.
 
-### In R
+### Example in R
 1. Go to the folder [/researcher/R](/researcher/R)
 2. Execute `sh run.sh`
 

@@ -11,8 +11,9 @@ organizations:
       -
         username: "researcher"
         firstname: "Researcher"
-        lastname: ""
+        lastname: "van Maastro"
         email: "researcher@maastro.nl"
+        roles: []
         password: "password"
   -
     name: "Maastricht University Medical Center"
@@ -26,7 +27,7 @@ organizations:
 collaborations:
   -
     name: "demo-maastro-mumc"
-    encrypted: False
+    encrypted: false
     participants:
       -
         name: "MAASTRO Clinic"
