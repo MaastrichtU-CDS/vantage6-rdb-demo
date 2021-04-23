@@ -51,11 +51,6 @@ services:
     image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
     environment:
       - DATA_VOLUME_NAME=datavol-maastro
-      - PGUSER=postgres
-      - PGPASSWORD=${POSTGRES_PASSWORD:-password}
-      - PGDATABASE=MaastroDB
-      - PGPORT=5432
-      - PGHOST=db
     volumes:
       - datavol-maastro:/mnt/data
       - $PWD/maastro/log:/mnt/log
@@ -73,11 +68,6 @@ services:
     image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
     environment:
       - DATA_VOLUME_NAME=datavol-mumc
-      - PGUSER=postgres
-      - PGPASSWORD=${POSTGRES_PASSWORD:-password}
-      - PGDATABASE=MumcDB
-      - PGPORT=5432
-      - PGHOST=db
     volumes:
       - datavol-mumc:/mnt/data
       - $PWD/mumc/log:/mnt/log

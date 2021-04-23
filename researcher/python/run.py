@@ -11,30 +11,30 @@ client.setup_encryption(None)
 input_ = {
     "master": "true",
     "method":"master", 
-    "args": [
-        {
-            "ID":"Int64",
-            "Age":"Int64", 
-            "Clinical.T.Stage":"category", 
-            "Clinical.N.Stage":"category",
-            "Clinical.M.Stage": "category",
-            "Overall.Ajcc.Stage": "category",
-            "Histology": "category",
-            "Sex": "category",
-            "Survival.Time.Days": "Int64",
-            "deadstatus.event": "Int64"}, 
-        ".",
-        ";"], 
-    "kwargs": {}
+    "args": [], 
+    "kwargs": {
+        "functions": [],
+        "columns": [
+            {
+                "variable": "Age",
+                "table": "records",
+                "functions": ["min", "max"]
+            },
+            {
+                "variable": "Clinical.T.Stage",
+                "table": "records"
+            }
+        ]
+    }
 }
 
 print("Requesting to execute summary algorithm")
 task = client.post_task(
     name="testing",
-    image="harbor.vantage6.ai/algorithms/summary",
+    image="pmateus/v6-summary-rdb:1.0.0",
     collaboration_id=1,
     input_= input_,
-    organization_ids=[1, 2]
+    organization_ids=[2, 3]
 )
 
 print("Wait and fetch results")

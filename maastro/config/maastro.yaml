@@ -18,6 +18,12 @@ application:
     server_url: http://vantage6_server
     task_dir: tasks
     environments:
+    algorithm_env:
+        PGUSER: postgres
+        PGPASSWORD: password
+        PGDATABASE: MaastroDB
+        PGPORT: 5432
+        PGHOST: vantage6-rdb
     acc: {}
     dev: {}
     prod: {}

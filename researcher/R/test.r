@@ -3,7 +3,7 @@ setup.client <- function() {
   # Username/password should be provided by the administrator of
   # the server.
   username <- "researcher"
-  password <- "1234"
+  password <- "password"
   
   host <- 'http://172.17.0.1:5000'
   api_path <- '/api'
