@@ -6,7 +6,7 @@ Demo to explore the Vantage6 framework using a relational database to store the 
 
 Currently there are two problems when setting up the server infrastructure from a config file (`/server/config/init.yaml`):
 1. Not possible to set up an unencrypted collaboration
-2. Not possible to give user the needed permissions
+2. Not possible to give user the necessary permissions
 
 Problem 1 is currently fixed by copying the fixed vantage6 server fixture file (`/utils/fixture.py`) directly to the container and replacing the original. However, solving problem 2 requires some manual steps:
 - Open the db manager at `localhost:8080` and log in into the database
@@ -46,6 +46,10 @@ The run.py file contains the actual code as a researcher to execute a train on t
 2. Execute `sh run.sh`
 
 The test.r file contains the actual code as a researcher to execute a train on the infrastructure.
+
+### Stop the infrastructure
+
+Run the following command `sh stop_all.sh` to stop and remove the containers, volumes, and networks.
 
 ## How to configure additional stations/users in the central station?
 
