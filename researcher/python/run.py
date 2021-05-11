@@ -1,5 +1,4 @@
 from vantage6.client import Client
-from pathlib import Path
 import time
 
 print("Attempt login to Vantage6 API")
