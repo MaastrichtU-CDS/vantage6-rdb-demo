@@ -2,19 +2,6 @@
 
 Demo to explore the Vantage6 framework using a relational database to store the node's data.
 
-## :exclamation: Issues
-
-Currently there are two problems when setting up the server infrastructure from a config file (`/server/config/init.yaml`):
-1. Not possible to set up an unencrypted collaboration
-2. Not possible to give user the necessary permissions
-
-Problem 1 is currently fixed by copying the fixed vantage6 server fixture file (`/utils/fixture.py`) directly to the container and replacing the original. However, solving problem 2 requires some manual steps:
-- Open the db manager at `localhost:8080` and log in into the database
-- Go to "Permission" table in the "ServerDB"
-- Insert a new row for `user_id` 2 with `role_id` 3
-
-This should give the require permissions for the researcher to send tasks.
-
 ## Usage
 
 ### Spin up the infrastructure

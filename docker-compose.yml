@@ -24,7 +24,7 @@ services:
 
   server:
     container_name: vantage6_server
-    image: harbor.vantage6.ai/infrastructure/server:2.1.0
+    image: harbor.vantage6.ai/infrastructure/server:2.1.1
     ports:
       - 5000:5000
     environment:
@@ -37,7 +37,6 @@ services:
     volumes:
       - $PWD/server/config/config.yaml:/config.yaml
       - $PWD/server/config/init.yaml:/init.yaml
-      - $PWD/utils/fixture.py:/vantage6/vantage6-server/vantage6/server/controller/fixture.py
       - /var/run/docker.sock:/var/run/docker.sock
     entrypoint: ["vserver-local", "start", "-c", "/config.yaml", "-e", "prod"]
     networks:
