@@ -7,6 +7,7 @@ services:
     environment:
       POSTGRES_DB: ServerDB
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
+      OMOP_CDM: ${OMOP_CDM}
     volumes:
       - $PWD/db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       - $PWD/db/data:/mnt/data
@@ -43,11 +44,12 @@ services:
       - vantage6_server
     restart: unless-stopped
     depends_on:
-      - db
+     - db
 
   maastro-user:
     container_name: vantage6-maastro-user
     image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
+    #image: pmateus/vantage6-node-whitelisted:1.0.0
     environment:
       - DATA_VOLUME_NAME=datavol-maastro
     volumes:
@@ -65,6 +67,7 @@ services:
   mumc-user:
     container_name: vantage6-mumc-user
     image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
+    #image: pmateus/vantage6-node-whitelisted:1.0.0
     environment:
       - DATA_VOLUME_NAME=datavol-mumc
     volumes:

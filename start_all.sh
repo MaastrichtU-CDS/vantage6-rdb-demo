@@ -1,3 +1,21 @@
+# Retrieving the arguments
+omop_model=''
+while getopts 'o' flag; do
+    case "${flag}" in
+        o) omop_model='true' ;;
+    esac
+done
+
+# Setting up the environment variables
+if [[ $omop_model ]]
+then
+    echo "Using the OMOP CDM as the database"
+    export OMOP_CDM="True"
+else
+    echo "Using the default relational database model"
+    export OMOP_CDM="False"
+fi
+
 # Generating a private key for each node
 # nodes=("maastro" "mumc")
 # for node in "${nodes[@]}"; do
@@ -15,6 +33,7 @@ docker volume create datavol-maastro
 docker-compose -f docker-compose.yml up -d
 
 # Setting up the organizations, users, collaborations
+sleep 5
 docker exec -it vantage6_server vserver-local import -c /config.yaml /init.yaml
 
 # Connecting the datatabase container to the algorithm container's network
