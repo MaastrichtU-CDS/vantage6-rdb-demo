@@ -11,6 +11,10 @@ Run the following command `sh start_all.sh` to:
 - run the docker-compose file
 - set-up the server database
 
+Additionally, it's possible to use the flag `-o` (command `sh start_all.sh -o`) in order to 
+import psql files as the databases. It could be used to import more complex databased, such as 
+the OMOP CDM. Make sure to include both files (`maastro.psql`, `mumc.psql`) in the folder `/db/data`.
+
 The docker-compose file will create:
 - a container running a postgres database
 - a container running a database manager accessible on `localhost:8080`
