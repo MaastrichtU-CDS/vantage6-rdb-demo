@@ -1,0 +1,3145 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 13.1
+-- Dumped by pg_dump version 13.1
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: attribute_definition; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.attribute_definition (
+    attribute_definition_id integer NOT NULL,
+    attribute_name character varying(255) NOT NULL,
+    attribute_description text,
+    attribute_type_concept_id integer NOT NULL,
+    attribute_syntax text
+);
+
+
+ALTER TABLE public.attribute_definition OWNER TO postgres;
+
+--
+-- Name: care_site; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.care_site (
+    care_site_id bigint NOT NULL,
+    care_site_name character varying(255),
+    place_of_service_concept_id integer NOT NULL,
+    location_id bigint,
+    care_site_source_value character varying(50),
+    place_of_service_source_value character varying(50)
+);
+
+
+ALTER TABLE public.care_site OWNER TO postgres;
+
+--
+-- Name: care_site_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.care_site_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.care_site_sequence OWNER TO postgres;
+
+--
+-- Name: cdm_source; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cdm_source (
+    cdm_source_name character varying(255) NOT NULL,
+    cdm_source_abbreviation character varying(25),
+    cdm_holder character varying(255),
+    source_description text,
+    source_documentation_reference character varying(255),
+    cdm_etl_reference character varying(255),
+    source_release_date date,
+    cdm_release_date date,
+    cdm_version character varying(10),
+    vocabulary_version character varying(20)
+);
+
+
+ALTER TABLE public.cdm_source OWNER TO postgres;
+
+--
+-- Name: concept; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.concept (
+    concept_id integer NOT NULL,
+    concept_name character varying(255) NOT NULL,
+    domain_id character varying(20) NOT NULL,
+    vocabulary_id character varying(20) NOT NULL,
+    concept_class_id character varying(20) NOT NULL,
+    standard_concept character varying(1),
+    concept_code character varying(50) NOT NULL,
+    valid_start_date date NOT NULL,
+    valid_end_date date NOT NULL,
+    invalid_reason character varying(1)
+);
+
+
+ALTER TABLE public.concept OWNER TO postgres;
+
+--
+-- Name: concept_ancestor; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.concept_ancestor (
+    ancestor_concept_id integer NOT NULL,
+    descendant_concept_id integer NOT NULL,
+    min_levels_of_separation integer NOT NULL,
+    max_levels_of_separation integer NOT NULL
+);
+
+
+ALTER TABLE public.concept_ancestor OWNER TO postgres;
+
+--
+-- Name: concept_class; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.concept_class (
+    concept_class_id character varying(20) NOT NULL,
+    concept_class_name character varying(255) NOT NULL,
+    concept_class_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.concept_class OWNER TO postgres;
+
+--
+-- Name: concept_relationship; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.concept_relationship (
+    concept_id_1 integer NOT NULL,
+    concept_id_2 integer NOT NULL,
+    relationship_id character varying(20) NOT NULL,
+    valid_start_date date NOT NULL,
+    valid_end_date date NOT NULL,
+    invalid_reason character varying(1)
+);
+
+
+ALTER TABLE public.concept_relationship OWNER TO postgres;
+
+--
+-- Name: concept_synonym; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.concept_synonym (
+    concept_id integer NOT NULL,
+    concept_synonym_name character varying(1000) NOT NULL,
+    language_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.concept_synonym OWNER TO postgres;
+
+--
+-- Name: condition_era; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.condition_era (
+    condition_era_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    condition_concept_id integer NOT NULL,
+    condition_era_start_datetime timestamp without time zone NOT NULL,
+    condition_era_end_datetime timestamp without time zone NOT NULL,
+    condition_occurrence_count integer
+);
+
+
+ALTER TABLE public.condition_era OWNER TO postgres;
+
+--
+-- Name: condition_occurrence; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.condition_occurrence (
+    condition_occurrence_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    condition_concept_id integer NOT NULL,
+    condition_start_date date,
+    condition_start_datetime timestamp without time zone NOT NULL,
+    condition_end_date date,
+    condition_end_datetime timestamp without time zone,
+    condition_type_concept_id integer NOT NULL,
+    condition_status_concept_id integer NOT NULL,
+    stop_reason character varying(20),
+    provider_id bigint,
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    condition_source_value character varying(50),
+    condition_source_concept_id integer NOT NULL,
+    condition_status_source_value character varying(50)
+);
+
+
+ALTER TABLE public.condition_occurrence OWNER TO postgres;
+
+--
+-- Name: condition_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.condition_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.condition_sequence OWNER TO postgres;
+
+--
+-- Name: cost; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.cost (
+    cost_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    cost_event_id bigint NOT NULL,
+    cost_event_field_concept_id integer NOT NULL,
+    cost_concept_id integer NOT NULL,
+    cost_type_concept_id integer NOT NULL,
+    currency_concept_id integer NOT NULL,
+    cost numeric,
+    incurred_date date NOT NULL,
+    billed_date date,
+    paid_date date,
+    revenue_code_concept_id integer NOT NULL,
+    drg_concept_id integer NOT NULL,
+    cost_source_value character varying(50),
+    cost_source_concept_id integer NOT NULL,
+    revenue_code_source_value character varying(50),
+    drg_source_value character varying(3),
+    payer_plan_period_id bigint
+);
+
+
+ALTER TABLE public.cost OWNER TO postgres;
+
+--
+-- Name: device_exposure; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.device_exposure (
+    device_exposure_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    device_concept_id integer NOT NULL,
+    device_exposure_start_date date,
+    device_exposure_start_datetime timestamp without time zone NOT NULL,
+    device_exposure_end_date date,
+    device_exposure_end_datetime timestamp without time zone,
+    device_type_concept_id integer NOT NULL,
+    unique_device_id character varying(50),
+    quantity integer,
+    provider_id bigint,
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    device_source_value character varying(100),
+    device_source_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.device_exposure OWNER TO postgres;
+
+--
+-- Name: domain; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.domain (
+    domain_id character varying(20) NOT NULL,
+    domain_name character varying(255) NOT NULL,
+    domain_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.domain OWNER TO postgres;
+
+--
+-- Name: dose_era; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.dose_era (
+    dose_era_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    drug_concept_id integer NOT NULL,
+    unit_concept_id integer NOT NULL,
+    dose_value numeric NOT NULL,
+    dose_era_start_datetime timestamp without time zone NOT NULL,
+    dose_era_end_datetime timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.dose_era OWNER TO postgres;
+
+--
+-- Name: drug_era; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.drug_era (
+    drug_era_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    drug_concept_id integer NOT NULL,
+    drug_era_start_datetime timestamp without time zone NOT NULL,
+    drug_era_end_datetime timestamp without time zone NOT NULL,
+    drug_exposure_count integer,
+    gap_days integer
+);
+
+
+ALTER TABLE public.drug_era OWNER TO postgres;
+
+--
+-- Name: drug_exposure; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.drug_exposure (
+    drug_exposure_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    drug_concept_id integer NOT NULL,
+    drug_exposure_start_date date,
+    drug_exposure_start_datetime timestamp without time zone NOT NULL,
+    drug_exposure_end_date date,
+    drug_exposure_end_datetime timestamp without time zone NOT NULL,
+    verbatim_end_date date,
+    drug_type_concept_id integer NOT NULL,
+    stop_reason character varying(20),
+    refills integer,
+    quantity numeric,
+    days_supply integer,
+    sig text,
+    route_concept_id integer NOT NULL,
+    lot_number character varying(50),
+    provider_id bigint,
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    drug_source_value character varying(50),
+    drug_source_concept_id integer NOT NULL,
+    route_source_value character varying(50),
+    dose_unit_source_value character varying(50)
+);
+
+
+ALTER TABLE public.drug_exposure OWNER TO postgres;
+
+--
+-- Name: drug_strength; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.drug_strength (
+    drug_concept_id integer NOT NULL,
+    ingredient_concept_id integer NOT NULL,
+    amount_value numeric,
+    amount_unit_concept_id integer,
+    numerator_value numeric,
+    numerator_unit_concept_id integer,
+    denominator_value numeric,
+    denominator_unit_concept_id integer,
+    box_size integer,
+    valid_start_date date NOT NULL,
+    valid_end_date date NOT NULL,
+    invalid_reason character varying(1)
+);
+
+
+ALTER TABLE public.drug_strength OWNER TO postgres;
+
+--
+-- Name: fact_relationship; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.fact_relationship (
+    domain_concept_id_1 integer NOT NULL,
+    fact_id_1 bigint NOT NULL,
+    domain_concept_id_2 integer NOT NULL,
+    fact_id_2 bigint NOT NULL,
+    relationship_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.fact_relationship OWNER TO postgres;
+
+--
+-- Name: location; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.location (
+    location_id bigint NOT NULL,
+    address_1 character varying(50),
+    address_2 character varying(50),
+    city character varying(50),
+    state character varying(2),
+    zip character varying(9),
+    county character varying(20),
+    country character varying(100),
+    location_source_value character varying(50),
+    latitude numeric,
+    longitude numeric
+);
+
+
+ALTER TABLE public.location OWNER TO postgres;
+
+--
+-- Name: location_history; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.location_history (
+    location_history_id bigint NOT NULL,
+    location_id bigint NOT NULL,
+    relationship_type_concept_id integer NOT NULL,
+    domain_id character varying(50) NOT NULL,
+    entity_id bigint NOT NULL,
+    start_date date NOT NULL,
+    end_date date
+);
+
+
+ALTER TABLE public.location_history OWNER TO postgres;
+
+--
+-- Name: location_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.location_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.location_sequence OWNER TO postgres;
+
+--
+-- Name: measurement; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.measurement (
+    measurement_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    measurement_concept_id integer NOT NULL,
+    measurement_date date,
+    measurement_datetime timestamp without time zone NOT NULL,
+    measurement_time character varying(10),
+    measurement_type_concept_id integer NOT NULL,
+    operator_concept_id integer,
+    value_as_number numeric,
+    value_as_concept_id integer,
+    unit_concept_id integer,
+    range_low numeric,
+    range_high numeric,
+    provider_id bigint,
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    measurement_source_value character varying(50),
+    measurement_source_concept_id integer NOT NULL,
+    unit_source_value character varying(50),
+    value_source_value character varying(50)
+);
+
+
+ALTER TABLE public.measurement OWNER TO postgres;
+
+--
+-- Name: measurement_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.measurement_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.measurement_sequence OWNER TO postgres;
+
+--
+-- Name: metadata; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.metadata (
+    metadata_concept_id integer NOT NULL,
+    metadata_type_concept_id integer NOT NULL,
+    name character varying(250) NOT NULL,
+    value_as_string text,
+    value_as_concept_id integer,
+    metadata_date date,
+    metadata_datetime timestamp without time zone
+);
+
+
+ALTER TABLE public.metadata OWNER TO postgres;
+
+--
+-- Name: ncdc; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.ncdc (
+    id bigint NOT NULL,
+    date date NOT NULL,
+    birth_year integer,
+    age character varying(50),
+    date_age date,
+    sex integer,
+    mort_date date,
+    mort integer,
+    education_years character varying(50),
+    education_category character varying(50),
+    dementia_diagnosis boolean,
+    date_diagnosis date,
+    hypertension boolean,
+    date_comorbidities date,
+    dementia_cutoff character varying(50),
+    cdr_total character varying(50),
+    date_cdr date,
+    sbp numeric,
+    date_vitals date,
+    dbp numeric,
+    drugs_hypertension character varying(50),
+    csf_assay_tau character varying(50),
+    date_lp date
+);
+
+
+ALTER TABLE public.ncdc OWNER TO postgres;
+
+--
+-- Name: ncdc2; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.ncdc2 (
+    id bigint NOT NULL,
+    date date NOT NULL,
+    birth_year integer,
+    age character varying(50),
+    date_age date,
+    sex integer,
+    mort_date date,
+    mort integer,
+    education_years character varying(50),
+    education_category character varying(50),
+    dementia_diagnosis boolean,
+    date_diagnosis date,
+    hypertension boolean,
+    date_comorbidities date,
+    dementia_cutoff character varying(50),
+    cdr_total character varying(50),
+    date_cdr date,
+    sbp numeric,
+    date_vitals date,
+    dbp numeric,
+    drugs_hypertension character varying(50),
+    csf_assay_tau character varying(50),
+    date_lp date
+);
+
+
+ALTER TABLE public.ncdc2 OWNER TO postgres;
+
+--
+-- Name: note; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.note (
+    note_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    note_event_id bigint,
+    note_event_field_concept_id integer NOT NULL,
+    note_date date,
+    note_datetime timestamp without time zone NOT NULL,
+    note_type_concept_id integer NOT NULL,
+    note_class_concept_id integer NOT NULL,
+    note_title character varying(250),
+    note_text text,
+    encoding_concept_id integer NOT NULL,
+    language_concept_id integer NOT NULL,
+    provider_id bigint,
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    note_source_value character varying(50)
+);
+
+
+ALTER TABLE public.note OWNER TO postgres;
+
+--
+-- Name: note_nlp; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.note_nlp (
+    note_nlp_id bigint NOT NULL,
+    note_id bigint NOT NULL,
+    section_concept_id integer NOT NULL,
+    snippet character varying(250),
+    "offset" character varying(250),
+    lexical_variant character varying(250) NOT NULL,
+    note_nlp_concept_id integer NOT NULL,
+    nlp_system character varying(250),
+    nlp_date date NOT NULL,
+    nlp_datetime timestamp without time zone,
+    term_exists character varying(1),
+    term_temporal character varying(50),
+    term_modifiers character varying(2000),
+    note_nlp_source_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.note_nlp OWNER TO postgres;
+
+--
+-- Name: observation; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.observation (
+    observation_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    observation_concept_id integer NOT NULL,
+    observation_date date,
+    observation_datetime timestamp without time zone NOT NULL,
+    observation_type_concept_id integer NOT NULL,
+    value_as_number numeric,
+    value_as_string character varying(60),
+    value_as_concept_id integer,
+    qualifier_concept_id integer,
+    unit_concept_id integer,
+    provider_id bigint,
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    observation_source_value character varying(50),
+    observation_source_concept_id integer NOT NULL,
+    unit_source_value character varying(50),
+    qualifier_source_value character varying(50),
+    observation_event_id bigint,
+    obs_event_field_concept_id integer NOT NULL,
+    value_as_datetime timestamp without time zone
+);
+
+
+ALTER TABLE public.observation OWNER TO postgres;
+
+--
+-- Name: observation_period; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.observation_period (
+    observation_period_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    observation_period_start_date date NOT NULL,
+    observation_period_end_date date NOT NULL,
+    period_type_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.observation_period OWNER TO postgres;
+
+--
+-- Name: observation_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.observation_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.observation_sequence OWNER TO postgres;
+
+--
+-- Name: payer_plan_period; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.payer_plan_period (
+    payer_plan_period_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    contract_person_id bigint,
+    payer_plan_period_start_date date NOT NULL,
+    payer_plan_period_end_date date NOT NULL,
+    payer_concept_id integer NOT NULL,
+    plan_concept_id integer NOT NULL,
+    contract_concept_id integer NOT NULL,
+    sponsor_concept_id integer NOT NULL,
+    stop_reason_concept_id integer NOT NULL,
+    payer_source_value character varying(50),
+    payer_source_concept_id integer NOT NULL,
+    plan_source_value character varying(50),
+    plan_source_concept_id integer NOT NULL,
+    contract_source_value character varying(50),
+    contract_source_concept_id integer NOT NULL,
+    sponsor_source_value character varying(50),
+    sponsor_source_concept_id integer NOT NULL,
+    family_source_value character varying(50),
+    stop_reason_source_value character varying(50),
+    stop_reason_source_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.payer_plan_period OWNER TO postgres;
+
+--
+-- Name: person; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.person (
+    person_id bigint NOT NULL,
+    gender_concept_id integer NOT NULL,
+    year_of_birth integer NOT NULL,
+    month_of_birth integer,
+    day_of_birth integer,
+    birth_datetime timestamp without time zone,
+    death_datetime timestamp without time zone,
+    race_concept_id integer NOT NULL,
+    ethnicity_concept_id integer NOT NULL,
+    location_id bigint,
+    provider_id bigint,
+    care_site_id bigint,
+    person_source_value character varying(50),
+    gender_source_value character varying(50),
+    gender_source_concept_id integer NOT NULL,
+    race_source_value character varying(50),
+    race_source_concept_id integer NOT NULL,
+    ethnicity_source_value character varying(50),
+    ethnicity_source_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.person OWNER TO postgres;
+
+--
+-- Name: person_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.person_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.person_sequence OWNER TO postgres;
+
+--
+-- Name: person_source_id; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.person_source_id (
+    person_id bigint NOT NULL,
+    source_id character varying(100),
+    cohort_id character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.person_source_id OWNER TO postgres;
+
+--
+-- Name: procedure_occurrence; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.procedure_occurrence (
+    procedure_occurrence_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    procedure_concept_id integer NOT NULL,
+    procedure_date date,
+    procedure_datetime timestamp without time zone NOT NULL,
+    procedure_type_concept_id integer NOT NULL,
+    modifier_concept_id integer NOT NULL,
+    quantity integer,
+    provider_id bigint,
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    procedure_source_value character varying(50),
+    procedure_source_concept_id integer NOT NULL,
+    modifier_source_value character varying(50)
+);
+
+
+ALTER TABLE public.procedure_occurrence OWNER TO postgres;
+
+--
+-- Name: provider; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.provider (
+    provider_id bigint NOT NULL,
+    provider_name character varying(255),
+    npi character varying(20),
+    dea character varying(20),
+    specialty_concept_id integer NOT NULL,
+    care_site_id bigint,
+    year_of_birth integer,
+    gender_concept_id integer NOT NULL,
+    provider_source_value character varying(50),
+    specialty_source_value character varying(50),
+    specialty_source_concept_id integer,
+    gender_source_value character varying(50),
+    gender_source_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.provider OWNER TO postgres;
+
+--
+-- Name: relationship; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.relationship (
+    relationship_id character varying(20) NOT NULL,
+    relationship_name character varying(255) NOT NULL,
+    is_hierarchical character varying(1) NOT NULL,
+    defines_ancestry character varying(1) NOT NULL,
+    reverse_relationship_id character varying(20) NOT NULL,
+    relationship_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.relationship OWNER TO postgres;
+
+--
+-- Name: source_to_concept_map; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.source_to_concept_map (
+    source_code character varying(50) NOT NULL,
+    source_concept_id integer NOT NULL,
+    source_vocabulary_id character varying(20) NOT NULL,
+    source_code_description character varying(255),
+    target_concept_id integer NOT NULL,
+    target_vocabulary_id character varying(20) NOT NULL,
+    valid_start_date date NOT NULL,
+    valid_end_date date NOT NULL,
+    invalid_reason character varying(1)
+);
+
+
+ALTER TABLE public.source_to_concept_map OWNER TO postgres;
+
+--
+-- Name: specimen; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.specimen (
+    specimen_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    specimen_concept_id integer NOT NULL,
+    specimen_type_concept_id integer NOT NULL,
+    specimen_date date,
+    specimen_datetime timestamp without time zone NOT NULL,
+    quantity numeric,
+    unit_concept_id integer,
+    anatomic_site_concept_id integer NOT NULL,
+    disease_status_concept_id integer NOT NULL,
+    specimen_source_id character varying(50),
+    specimen_source_value character varying(50),
+    unit_source_value character varying(50),
+    anatomic_site_source_value character varying(50),
+    disease_status_source_value character varying(50)
+);
+
+
+ALTER TABLE public.specimen OWNER TO postgres;
+
+--
+-- Name: survey_conduct; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.survey_conduct (
+    survey_conduct_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    survey_concept_id integer NOT NULL,
+    survey_start_date date,
+    survey_start_datetime timestamp without time zone,
+    survey_end_date date,
+    survey_end_datetime timestamp without time zone NOT NULL,
+    provider_id bigint,
+    assisted_concept_id integer NOT NULL,
+    respondent_type_concept_id integer NOT NULL,
+    timing_concept_id integer NOT NULL,
+    collection_method_concept_id integer NOT NULL,
+    assisted_source_value character varying(50),
+    respondent_type_source_value character varying(100),
+    timing_source_value character varying(100),
+    collection_method_source_value character varying(100),
+    survey_source_value character varying(100),
+    survey_source_concept_id integer NOT NULL,
+    survey_source_identifier character varying(100),
+    validated_survey_concept_id integer NOT NULL,
+    validated_survey_source_value character varying(100),
+    survey_version_number character varying(20),
+    visit_occurrence_id bigint,
+    visit_detail_id bigint,
+    response_visit_occurrence_id bigint
+);
+
+
+ALTER TABLE public.survey_conduct OWNER TO postgres;
+
+--
+-- Name: visit_detail; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.visit_detail (
+    visit_detail_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    visit_detail_concept_id integer NOT NULL,
+    visit_detail_start_date date,
+    visit_detail_start_datetime timestamp without time zone NOT NULL,
+    visit_detail_end_date date,
+    visit_detail_end_datetime timestamp without time zone NOT NULL,
+    visit_detail_type_concept_id integer NOT NULL,
+    provider_id bigint,
+    care_site_id bigint,
+    discharge_to_concept_id integer NOT NULL,
+    admitted_from_concept_id integer NOT NULL,
+    admitted_from_source_value character varying(50),
+    visit_detail_source_value character varying(50),
+    visit_detail_source_concept_id integer NOT NULL,
+    discharge_to_source_value character varying(50),
+    preceding_visit_detail_id bigint,
+    visit_detail_parent_id bigint,
+    visit_occurrence_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.visit_detail OWNER TO postgres;
+
+--
+-- Name: visit_occurrence; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.visit_occurrence (
+    visit_occurrence_id bigint NOT NULL,
+    person_id bigint NOT NULL,
+    visit_concept_id integer NOT NULL,
+    visit_start_date date,
+    visit_start_datetime timestamp without time zone NOT NULL,
+    visit_end_date date,
+    visit_end_datetime timestamp without time zone NOT NULL,
+    visit_type_concept_id integer NOT NULL,
+    provider_id bigint,
+    care_site_id bigint,
+    visit_source_value character varying(50),
+    visit_source_concept_id integer NOT NULL,
+    admitted_from_concept_id integer NOT NULL,
+    admitted_from_source_value character varying(50),
+    discharge_to_source_value character varying(50),
+    discharge_to_concept_id integer NOT NULL,
+    preceding_visit_occurrence_id bigint
+);
+
+
+ALTER TABLE public.visit_occurrence OWNER TO postgres;
+
+--
+-- Name: visit_occurrence_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.visit_occurrence_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.visit_occurrence_sequence OWNER TO postgres;
+
+--
+-- Name: vocabulary; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.vocabulary (
+    vocabulary_id character varying(20) NOT NULL,
+    vocabulary_name character varying(255) NOT NULL,
+    vocabulary_reference character varying(255) NOT NULL,
+    vocabulary_version character varying(255),
+    vocabulary_concept_id integer NOT NULL
+);
+
+
+ALTER TABLE public.vocabulary OWNER TO postgres;
+
+--
+-- Data for Name: attribute_definition; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.attribute_definition (attribute_definition_id, attribute_name, attribute_description, attribute_type_concept_id, attribute_syntax) FROM stdin;
+\.
+
+
+--
+-- Data for Name: care_site; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.care_site (care_site_id, care_site_name, place_of_service_concept_id, location_id, care_site_source_value, place_of_service_source_value) FROM stdin;
+39	test	0	41	test	\N
+40	fasfa	0	42	fasfa	\N
+41	asdasdsa	0	43	asdasdsa	\N
+42	asfsa	0	44	asfsa	\N
+43	fasfas	0	45	fasfas	\N
+44	asfas	0	47	asfas	\N
+45	dsada	0	48	dsada	\N
+46	asfsaf	0	49	asfsaf	\N
+47	afsfasfsa	0	50	afsfasfsa	\N
+48	asd	0	51	asd	\N
+49	lajkslf	0	52	lajkslf	\N
+50	fafaf	0	54	fafaf	\N
+51	amsf	0	55	amsf	\N
+52	asdasd	0	57	asdasd	\N
+53	asdsad	0	58	asdsad	\N
+54	;lasdk;	0	59	;lasdk;	\N
+55	kasdn	0	60	kasdn	\N
+56	sadasd	0	65	sadasd	\N
+\.
+
+
+--
+-- Data for Name: cdm_source; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cdm_source (cdm_source_name, cdm_source_abbreviation, cdm_holder, source_description, source_documentation_reference, cdm_etl_reference, source_release_date, cdm_release_date, cdm_version, vocabulary_version) FROM stdin;
+\.
+
+
+--
+-- Data for Name: concept; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.concept (concept_id, concept_name, domain_id, vocabulary_id, concept_class_id, standard_concept, concept_code, valid_start_date, valid_end_date, invalid_reason) FROM stdin;
+4058286	H/O: hypertension	Observation	SNOMED	Context-dependent	S	161501007	2002-01-31	2099-12-31	\N
+4132135	Absent	Meas Value	SNOMED	Qualifier Value	S	2667000	2002-01-31	2099-12-31	\N
+4152194	Systolic blood pressure	Measurement	SNOMED	Observable Entity	S	271649006	2002-01-31	2099-12-31	\N
+4154790	Diastolic blood pressure	Measurement	SNOMED	Observable Entity	S	271650006	2002-01-31	2099-12-31	\N
+4182210	Dementia	Condition	SNOMED	Clinical Finding	S	52448006	2002-01-31	2099-12-31	\N
+4188539	Yes	Meas Value	SNOMED	Qualifier Value	S	373066001	2002-07-31	2099-12-31	\N
+4188540	No	Meas Value	SNOMED	Qualifier Value	S	373067005	2002-07-31	2099-12-31	\N
+4265453	Age	Observation	SNOMED	Qualifier Value	S	397669002	2003-07-31	2099-12-31	\N
+2000000004	live_date	Observation	Vocabulary	Observation	\N	Live_Date	2021-01-01	2099-12-31	\N
+2000000015	amy_abnormal	Condition	Vocabulary	Condition	\N	Amy_abnormal	2021-01-01	2099-12-31	\N
+\.
+
+
+--
+-- Data for Name: concept_ancestor; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.concept_ancestor (ancestor_concept_id, descendant_concept_id, min_levels_of_separation, max_levels_of_separation) FROM stdin;
+\.
+
+
+--
+-- Data for Name: concept_class; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.concept_class (concept_class_id, concept_class_name, concept_class_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: concept_relationship; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.concept_relationship (concept_id_1, concept_id_2, relationship_id, valid_start_date, valid_end_date, invalid_reason) FROM stdin;
+\.
+
+
+--
+-- Data for Name: concept_synonym; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.concept_synonym (concept_id, concept_synonym_name, language_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: condition_era; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.condition_era (condition_era_id, person_id, condition_concept_id, condition_era_start_datetime, condition_era_end_datetime, condition_occurrence_count) FROM stdin;
+\.
+
+
+--
+-- Data for Name: condition_occurrence; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.condition_occurrence (condition_occurrence_id, person_id, condition_concept_id, condition_start_date, condition_start_datetime, condition_end_date, condition_end_datetime, condition_type_concept_id, condition_status_concept_id, stop_reason, provider_id, visit_occurrence_id, visit_detail_id, condition_source_value, condition_source_concept_id, condition_status_source_value) FROM stdin;
+38	146	4182210	\N	2004-01-23 00:00:00	\N	\N	0	0	\N	\N	183	\N	true	0	dementia_cutoff > 0.5
+39	150	4182210	\N	2004-01-23 00:00:00	\N	\N	0	0	\N	\N	189	\N	true	0	dementia_cutoff > 0.5
+40	154	4182210	\N	2004-01-23 00:00:00	\N	\N	0	0	\N	\N	195	\N	true	0	dementia_cutoff > 0.5
+\.
+
+
+--
+-- Data for Name: cost; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.cost (cost_id, person_id, cost_event_id, cost_event_field_concept_id, cost_concept_id, cost_type_concept_id, currency_concept_id, cost, incurred_date, billed_date, paid_date, revenue_code_concept_id, drg_concept_id, cost_source_value, cost_source_concept_id, revenue_code_source_value, drg_source_value, payer_plan_period_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: device_exposure; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.device_exposure (device_exposure_id, person_id, device_concept_id, device_exposure_start_date, device_exposure_start_datetime, device_exposure_end_date, device_exposure_end_datetime, device_type_concept_id, unique_device_id, quantity, provider_id, visit_occurrence_id, visit_detail_id, device_source_value, device_source_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: domain; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.domain (domain_id, domain_name, domain_concept_id) FROM stdin;
+Condition	Condition	19
+Condition Status	OMOP Condition Status	32889
+Condition/Device	Condition/Device	235
+Condition/Drug	Condition/Drug	53
+Condition/Meas	Condition/Measurement	47
+Condition/Obs	Condition/Observation	48
+Condition/Procedure	Condition/Procedure	49
+Cost	Cost	581456
+Currency	Currency	34
+Device	Device	17
+Device/Drug	Device/Drug	50
+Device/Obs	Device/Observation	45
+Device/Procedure	Device/Procedure	41
+Drug	Drug	13
+Drug/Measurement	Drug/Measurement	51
+Drug/Obs	Drug/Observation	52
+Drug/Procedure	Drug/Procedure	54
+Episode	Episode	32527
+Ethnicity	Ethnicity	4
+Gender	Gender	2
+Geography	Geographical object	32558
+Meas Value	Measurement Value	24
+Meas Value Operator	Measurement Value Operator	23
+Meas/Procedure	Measurement/Procedure	43
+Measurement	Measurement	21
+Measurement/Obs	Measurement/Observation	44
+Metadata	Metadata	7
+Modifier	Modifier	12
+Obs/Procedure	Observation/Procedure	42
+Observation	Observation	27
+Payer	Payer - institution administering healthcare transactions	32477
+Place of Service	Place of Service	32
+Plan	Health Plan - contract to administer healthcare transactions by the payer, facilitated by the sponsor	32475
+Plan Stop Reason	Plan Stop Reason - Reason for termination of the Health Plan	32478
+Procedure	Procedure	10
+Provider	Provider Specialty	33
+Race	Race	3
+Regimen	Treatment Regimen	32687
+Relationship	Relationship	31
+Revenue Code	Revenue Code	35
+Route	Route Of Administration	15
+Spec Anatomic Site	Specimen Anatomic Site	38
+Spec Disease Status	Specimen Disease Status	39
+Specimen	Specimen	36
+Sponsor	Sponsor - institution or individual financing healthcare transactions	32476
+Type Concept	Type Concept	58
+Unit	Unit	16
+Visit	Visit	8
+\.
+
+
+--
+-- Data for Name: dose_era; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.dose_era (dose_era_id, person_id, drug_concept_id, unit_concept_id, dose_value, dose_era_start_datetime, dose_era_end_datetime) FROM stdin;
+\.
+
+
+--
+-- Data for Name: drug_era; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.drug_era (drug_era_id, person_id, drug_concept_id, drug_era_start_datetime, drug_era_end_datetime, drug_exposure_count, gap_days) FROM stdin;
+\.
+
+
+--
+-- Data for Name: drug_exposure; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.drug_exposure (drug_exposure_id, person_id, drug_concept_id, drug_exposure_start_date, drug_exposure_start_datetime, drug_exposure_end_date, drug_exposure_end_datetime, verbatim_end_date, drug_type_concept_id, stop_reason, refills, quantity, days_supply, sig, route_concept_id, lot_number, provider_id, visit_occurrence_id, visit_detail_id, drug_source_value, drug_source_concept_id, route_source_value, dose_unit_source_value) FROM stdin;
+\.
+
+
+--
+-- Data for Name: drug_strength; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.drug_strength (drug_concept_id, ingredient_concept_id, amount_value, amount_unit_concept_id, numerator_value, numerator_unit_concept_id, denominator_value, denominator_unit_concept_id, box_size, valid_start_date, valid_end_date, invalid_reason) FROM stdin;
+\.
+
+
+--
+-- Data for Name: fact_relationship; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.fact_relationship (domain_concept_id_1, fact_id_1, domain_concept_id_2, fact_id_2, relationship_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: location; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.location (location_id, address_1, address_2, city, state, zip, county, country, location_source_value, latitude, longitude) FROM stdin;
+1	test	\N	\N	\N	\N	\N	\N	\N	\N	\N
+2	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+3	test	\N	\N	\N	\N	\N	\N	\N	\N	\N
+4	sad	\N	\N	\N	\N	\N	\N	\N	\N	\N
+5	sadsds	\N	\N	\N	\N	\N	\N	\N	\N	\N
+6	test	\N	\N	\N	\N	\N	\N	\N	\N	\N
+7	rttes	\N	\N	\N	\N	\N	\N	\N	\N	\N
+8	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+9	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+10	ads	\N	\N	\N	\N	\N	\N	\N	\N	\N
+11	test	\N	\N	\N	\N	\N	\N	\N	\N	\N
+12	Test	\N	\N	\N	\N	\N	\N	\N	\N	\N
+13	dfgh	\N	\N	\N	\N	\N	\N	\N	\N	\N
+14	fghj	\N	\N	\N	\N	\N	\N	\N	\N	\N
+15	dasd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+16	Test1	\N	\N	\N	\N	\N	\N	\N	\N	\N
+17	test	\N	\N	\N	\N	\N	\N	\N	\N	\N
+18	test2	\N	\N	\N	\N	\N	\N	\N	\N	\N
+19	sad	\N	\N	\N	\N	\N	\N	\N	\N	\N
+20	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+21	tets	\N	\N	\N	\N	\N	\N	\N	\N	\N
+22	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+23	asfsa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+24	lkjd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+25	ljad	\N	\N	\N	\N	\N	\N	\N	\N	\N
+26	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+27	asdasd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+28	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+29	hklh	\N	\N	\N	\N	\N	\N	\N	\N	\N
+30	fasas	\N	\N	\N	\N	\N	\N	\N	\N	\N
+31	fasfsa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+32	asfasfa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+33	lnfnlsaf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+34	sggdgsdgs	\N	\N	\N	\N	\N	\N	\N	\N	\N
+35	;akfm;lasf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+36	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+37	nfalnkf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+38	fasfa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+39	asfsaf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+40	sad	\N	\N	\N	\N	\N	\N	\N	\N	\N
+41	test	\N	\N	\N	\N	\N	\N	\N	\N	\N
+42	fasfa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+43	asdasdsa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+44	asfsa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+45	fasfas	\N	\N	\N	\N	\N	\N	\N	\N	\N
+46	fasfas	\N	\N	\N	\N	\N	\N	\N	\N	\N
+47	asfas	\N	\N	\N	\N	\N	\N	\N	\N	\N
+48	dsada	\N	\N	\N	\N	\N	\N	\N	\N	\N
+49	asfsaf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+50	afsfasfsa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+51	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+52	lajkslf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+53	asfsa	\N	\N	\N	\N	\N	\N	\N	\N	\N
+54	fafaf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+55	amsf	\N	\N	\N	\N	\N	\N	\N	\N	\N
+56	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+57	asdasd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+58	asdsad	\N	\N	\N	\N	\N	\N	\N	\N	\N
+59	;lasdk;	\N	\N	\N	\N	\N	\N	\N	\N	\N
+60	kasdn	\N	\N	\N	\N	\N	\N	\N	\N	\N
+61	asdsad	\N	\N	\N	\N	\N	\N	\N	\N	\N
+62	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+63	asdsad	\N	\N	\N	\N	\N	\N	\N	\N	\N
+64	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+65	sadasd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+66	asd	\N	\N	\N	\N	\N	\N	\N	\N	\N
+\.
+
+
+--
+-- Data for Name: location_history; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.location_history (location_history_id, location_id, relationship_type_concept_id, domain_id, entity_id, start_date, end_date) FROM stdin;
+\.
+
+
+--
+-- Data for Name: measurement; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.measurement (measurement_id, person_id, measurement_concept_id, measurement_date, measurement_datetime, measurement_time, measurement_type_concept_id, operator_concept_id, value_as_number, value_as_concept_id, unit_concept_id, range_low, range_high, provider_id, visit_occurrence_id, visit_detail_id, measurement_source_value, measurement_source_concept_id, unit_source_value, value_source_value) FROM stdin;
+291	142	4152194	\N	1970-01-01 00:00:00	\N	0	\N	129	\N	8876	\N	\N	\N	177	\N	1st Measurement	0	\N	129
+292	143	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	179	\N	1st Measurement	0	\N	130
+293	143	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	179	\N	\N	0	\N	87
+294	142	4152194	\N	1970-01-01 00:00:00	\N	0	\N	153	\N	8876	\N	\N	\N	180	\N	1st Measurement	0	\N	153
+295	144	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	181	\N	1st Measurement	0	\N	130
+296	144	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	181	\N	\N	0	\N	87
+297	145	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	182	\N	1st Measurement	0	\N	130
+298	145	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	182	\N	\N	0	\N	87
+299	146	4152194	\N	1970-01-01 00:00:00	\N	0	\N	129	\N	8876	\N	\N	\N	183	\N	1st Measurement	0	\N	129
+300	147	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	185	\N	1st Measurement	0	\N	130
+301	147	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	185	\N	\N	0	\N	87
+302	146	4152194	\N	1970-01-01 00:00:00	\N	0	\N	153	\N	8876	\N	\N	\N	186	\N	1st Measurement	0	\N	153
+303	148	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	187	\N	1st Measurement	0	\N	130
+304	148	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	187	\N	\N	0	\N	87
+305	149	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	188	\N	1st Measurement	0	\N	130
+306	149	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	188	\N	\N	0	\N	87
+307	150	4152194	\N	1970-01-01 00:00:00	\N	0	\N	129	\N	8876	\N	\N	\N	189	\N	1st Measurement	0	\N	129
+308	151	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	191	\N	1st Measurement	0	\N	130
+309	151	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	191	\N	\N	0	\N	87
+310	150	4152194	\N	1970-01-01 00:00:00	\N	0	\N	153	\N	8876	\N	\N	\N	192	\N	1st Measurement	0	\N	153
+311	152	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	193	\N	1st Measurement	0	\N	130
+312	152	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	193	\N	\N	0	\N	87
+313	153	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	194	\N	1st Measurement	0	\N	130
+314	153	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	194	\N	\N	0	\N	87
+315	154	4152194	\N	1970-01-01 00:00:00	\N	0	\N	129	\N	8876	\N	\N	\N	195	\N	1st Measurement	0	\N	129
+316	155	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	197	\N	1st Measurement	0	\N	130
+317	155	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	197	\N	\N	0	\N	87
+318	154	4152194	\N	1970-01-01 00:00:00	\N	0	\N	153	\N	8876	\N	\N	\N	198	\N	1st Measurement	0	\N	153
+319	156	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	199	\N	1st Measurement	0	\N	130
+320	156	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	199	\N	\N	0	\N	87
+321	157	4152194	\N	1970-01-01 00:00:00	\N	0	\N	130	\N	8876	\N	\N	\N	200	\N	1st Measurement	0	\N	130
+322	157	4154790	\N	1970-01-01 00:00:00	\N	0	\N	87	\N	8876	\N	\N	\N	200	\N	\N	0	\N	87
+\.
+
+
+--
+-- Data for Name: metadata; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.metadata (metadata_concept_id, metadata_type_concept_id, name, value_as_string, value_as_concept_id, metadata_date, metadata_datetime) FROM stdin;
+\.
+
+
+--
+-- Data for Name: ncdc; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ncdc (id, date, birth_year, age, date_age, sex, mort_date, mort, education_years, education_category, dementia_diagnosis, date_diagnosis, hypertension, date_comorbidities, dementia_cutoff, cdr_total, date_cdr, sbp, date_vitals, dbp, drugs_hypertension, csf_assay_tau, date_lp) FROM stdin;
+39	2004-09-01	1929	75	2004-09-01	1	\N	0	\N	\N	f	2004-09-01	t	\N	\N	\N	\N	130	\N	87	4188539	assay	\N
+40	2004-09-01	1914	91	2005-05-05	0	\N	0	\N	\N	f	2005-05-05	t	\N	\N	\N	\N	130	\N	87	4188539	assay	\N
+37	2004-01-23	1943	78	2004-01-23	\N	2008-09-11	1	\N	\N	t	2004-01-23	f	\N	\N	\N	\N	129	\N	65	4188539	assay	\N
+37	2004-07-21	1943	\N	\N	\N	2008-09-11	1	\N	\N	f	\N	t	\N	\N	\N	\N	153	\N	\N	\N	assay	\N
+38	2004-09-01	1941	80.9	2004-09-01	1	\N	1	\N	\N	f	2004-09-01	t	\N	\N	\N	\N	120	\N	87	4188539	assay	\N
+\.
+
+
+--
+-- Data for Name: ncdc2; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ncdc2 (id, date, birth_year, age, date_age, sex, mort_date, mort, education_years, education_category, dementia_diagnosis, date_diagnosis, hypertension, date_comorbidities, dementia_cutoff, cdr_total, date_cdr, sbp, date_vitals, dbp, drugs_hypertension, csf_assay_tau, date_lp) FROM stdin;
+37	2004-01-23	1943	78	2004-01-23	\N	2008-09-11	1	\N	\N	t	2004-01-23	f	\N	\N	\N	\N	129	\N	\N	4188539	assay	\N
+38	2004-09-01	1941	80.9	2004-09-01	1	\N	1	\N	\N	f	2004-09-01	t	\N	\N	\N	\N	130	\N	87	4188539	assay	\N
+37	2004-07-21	1943	\N	\N	\N	2008-09-11	1	\N	\N	f	\N	t	\N	\N	\N	\N	153	\N	\N	\N	assay	\N
+39	2004-09-01	1929	75	2004-09-01	1	\N	0	\N	\N	f	2004-09-01	t	\N	\N	\N	\N	130	\N	87	4188539	assay	\N
+40	2004-09-01	1914	91	2005-05-05	0	\N	0	\N	\N	f	2005-05-05	t	\N	\N	\N	\N	130	\N	87	4188539	assay	\N
+\.
+
+
+--
+-- Data for Name: note; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.note (note_id, person_id, note_event_id, note_event_field_concept_id, note_date, note_datetime, note_type_concept_id, note_class_concept_id, note_title, note_text, encoding_concept_id, language_concept_id, provider_id, visit_occurrence_id, visit_detail_id, note_source_value) FROM stdin;
+\.
+
+
+--
+-- Data for Name: note_nlp; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.note_nlp (note_nlp_id, note_id, section_concept_id, snippet, "offset", lexical_variant, note_nlp_concept_id, nlp_system, nlp_date, nlp_datetime, term_exists, term_temporal, term_modifiers, note_nlp_source_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: observation; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.observation (observation_id, person_id, observation_concept_id, observation_date, observation_datetime, observation_type_concept_id, value_as_number, value_as_string, value_as_concept_id, qualifier_concept_id, unit_concept_id, provider_id, visit_occurrence_id, visit_detail_id, observation_source_value, observation_source_concept_id, unit_source_value, qualifier_source_value, observation_event_id, obs_event_field_concept_id, value_as_datetime) FROM stdin;
+799	142	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188540	\N	\N	\N	177	\N	0	0	\N	\N	\N	0	\N
+800	142	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	177	\N	true	0	\N	\N	\N	0	\N
+801	142	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	177	\N	assay	0	\N	\N	\N	0	\N
+802	142	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	178	\N	1	0	\N	\N	\N	0	\N
+803	142	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	178	\N	assay	0	\N	\N	\N	0	\N
+804	143	4265453	\N	2004-09-01 00:00:00	32879	\N	80.9	\N	\N	9448	\N	179	\N	80.9	0	\N	\N	\N	0	\N
+805	143	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	179	\N	1	0	\N	\N	\N	0	\N
+806	143	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	179	\N	false	0	\N	\N	\N	0	\N
+807	143	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	179	\N	true	0	\N	\N	\N	0	\N
+808	143	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	179	\N	assay	0	\N	\N	\N	0	\N
+809	142	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	180	\N	1	0	\N	\N	\N	0	\N
+810	142	4182210	\N	1970-01-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	180	\N	false	0	\N	\N	\N	0	\N
+811	142	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	180	\N	assay	0	\N	\N	\N	0	\N
+812	144	4265453	\N	2004-09-01 00:00:00	32879	\N	75	\N	\N	9448	\N	181	\N	75	0	\N	\N	\N	0	\N
+813	144	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	181	\N	1	0	\N	\N	\N	0	\N
+814	144	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	181	\N	false	0	\N	\N	\N	0	\N
+815	144	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	181	\N	1	0	\N	\N	\N	0	\N
+816	144	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	181	\N	assay	0	\N	\N	\N	0	\N
+817	145	4265453	\N	2005-05-05 00:00:00	32879	\N	91	\N	\N	9448	\N	182	\N	91	0	\N	\N	\N	0	\N
+818	145	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	182	\N	1	0	\N	\N	\N	0	\N
+819	145	4182210	\N	2005-05-05 00:00:00	32879	\N	\N	4132135	\N	\N	\N	182	\N	false	0	\N	\N	\N	0	\N
+820	145	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	182	\N	1	0	\N	\N	\N	0	\N
+821	145	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	182	\N	assay	0	\N	\N	\N	0	\N
+822	146	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188540	\N	\N	\N	183	\N	0	0	\N	\N	\N	0	\N
+823	146	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	183	\N	true	0	\N	\N	\N	0	\N
+824	146	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	183	\N	assay	0	\N	\N	\N	0	\N
+825	146	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	184	\N	1	0	\N	\N	\N	0	\N
+826	146	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	184	\N	assay	0	\N	\N	\N	0	\N
+827	147	4265453	\N	2004-09-01 00:00:00	32879	\N	80.9	\N	\N	9448	\N	185	\N	80.9	0	\N	\N	\N	0	\N
+828	147	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	185	\N	1	0	\N	\N	\N	0	\N
+829	147	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	185	\N	false	0	\N	\N	\N	0	\N
+830	147	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	185	\N	true	0	\N	\N	\N	0	\N
+831	147	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	185	\N	assay	0	\N	\N	\N	0	\N
+832	146	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	186	\N	1	0	\N	\N	\N	0	\N
+833	146	4182210	\N	1970-01-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	186	\N	false	0	\N	\N	\N	0	\N
+834	146	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	186	\N	assay	0	\N	\N	\N	0	\N
+835	148	4265453	\N	2004-09-01 00:00:00	32879	\N	75	\N	\N	9448	\N	187	\N	75	0	\N	\N	\N	0	\N
+836	148	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	187	\N	1	0	\N	\N	\N	0	\N
+837	148	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	187	\N	false	0	\N	\N	\N	0	\N
+838	148	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	187	\N	1	0	\N	\N	\N	0	\N
+839	148	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	187	\N	assay	0	\N	\N	\N	0	\N
+840	149	4265453	\N	2005-05-05 00:00:00	32879	\N	91	\N	\N	9448	\N	188	\N	91	0	\N	\N	\N	0	\N
+841	149	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	188	\N	1	0	\N	\N	\N	0	\N
+842	149	4182210	\N	2005-05-05 00:00:00	32879	\N	\N	4132135	\N	\N	\N	188	\N	false	0	\N	\N	\N	0	\N
+843	149	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	188	\N	1	0	\N	\N	\N	0	\N
+844	149	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	188	\N	assay	0	\N	\N	\N	0	\N
+845	150	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188540	\N	\N	\N	189	\N	0	0	\N	\N	\N	0	\N
+846	150	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	189	\N	true	0	\N	\N	\N	0	\N
+847	150	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	189	\N	assay	0	\N	\N	\N	0	\N
+848	150	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	190	\N	1	0	\N	\N	\N	0	\N
+849	150	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	190	\N	assay	0	\N	\N	\N	0	\N
+850	151	4265453	\N	2004-09-01 00:00:00	32879	\N	80.9	\N	\N	9448	\N	191	\N	80.9	0	\N	\N	\N	0	\N
+851	151	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	191	\N	1	0	\N	\N	\N	0	\N
+852	151	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	191	\N	false	0	\N	\N	\N	0	\N
+853	151	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	191	\N	true	0	\N	\N	\N	0	\N
+854	151	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	191	\N	assay	0	\N	\N	\N	0	\N
+855	150	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	192	\N	1	0	\N	\N	\N	0	\N
+856	150	4182210	\N	1970-01-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	192	\N	false	0	\N	\N	\N	0	\N
+857	150	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	192	\N	assay	0	\N	\N	\N	0	\N
+858	152	4265453	\N	2004-09-01 00:00:00	32879	\N	75	\N	\N	9448	\N	193	\N	75	0	\N	\N	\N	0	\N
+859	152	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	193	\N	1	0	\N	\N	\N	0	\N
+860	152	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	193	\N	false	0	\N	\N	\N	0	\N
+861	152	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	193	\N	1	0	\N	\N	\N	0	\N
+862	152	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	193	\N	assay	0	\N	\N	\N	0	\N
+863	153	4265453	\N	2005-05-05 00:00:00	32879	\N	91	\N	\N	9448	\N	194	\N	91	0	\N	\N	\N	0	\N
+864	153	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	194	\N	1	0	\N	\N	\N	0	\N
+865	153	4182210	\N	2005-05-05 00:00:00	32879	\N	\N	4132135	\N	\N	\N	194	\N	false	0	\N	\N	\N	0	\N
+866	153	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	194	\N	1	0	\N	\N	\N	0	\N
+867	153	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	194	\N	assay	0	\N	\N	\N	0	\N
+868	154	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188540	\N	\N	\N	195	\N	0	0	\N	\N	\N	0	\N
+869	154	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	195	\N	true	0	\N	\N	\N	0	\N
+870	154	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	195	\N	assay	0	\N	\N	\N	0	\N
+871	154	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	196	\N	1	0	\N	\N	\N	0	\N
+872	154	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	196	\N	assay	0	\N	\N	\N	0	\N
+873	155	4265453	\N	2004-09-01 00:00:00	32879	\N	80.9	\N	\N	9448	\N	197	\N	80.9	0	\N	\N	\N	0	\N
+874	155	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	197	\N	1	0	\N	\N	\N	0	\N
+875	155	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	197	\N	false	0	\N	\N	\N	0	\N
+876	155	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	197	\N	true	0	\N	\N	\N	0	\N
+877	155	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	197	\N	assay	0	\N	\N	\N	0	\N
+878	154	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	198	\N	1	0	\N	\N	\N	0	\N
+879	154	4182210	\N	1970-01-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	198	\N	false	0	\N	\N	\N	0	\N
+880	154	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	198	\N	assay	0	\N	\N	\N	0	\N
+881	156	4265453	\N	2004-09-01 00:00:00	32879	\N	75	\N	\N	9448	\N	199	\N	75	0	\N	\N	\N	0	\N
+882	156	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	199	\N	1	0	\N	\N	\N	0	\N
+883	156	4182210	\N	2004-09-01 00:00:00	32879	\N	\N	4132135	\N	\N	\N	199	\N	false	0	\N	\N	\N	0	\N
+884	156	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	199	\N	1	0	\N	\N	\N	0	\N
+885	156	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	199	\N	assay	0	\N	\N	\N	0	\N
+886	157	4265453	\N	2005-05-05 00:00:00	32879	\N	91	\N	\N	9448	\N	200	\N	91	0	\N	\N	\N	0	\N
+887	157	4058286	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	200	\N	1	0	\N	\N	\N	0	\N
+888	157	4182210	\N	2005-05-05 00:00:00	32879	\N	\N	4132135	\N	\N	\N	200	\N	false	0	\N	\N	\N	0	\N
+889	157	2000000004	\N	1970-01-01 00:00:00	32879	\N	\N	4188539	\N	\N	\N	200	\N	1	0	\N	\N	\N	0	\N
+890	157	2000000015	\N	1970-01-01 00:00:00	32879	\N	assay	\N	\N	\N	\N	200	\N	assay	0	\N	\N	\N	0	\N
+\.
+
+
+--
+-- Data for Name: observation_period; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.observation_period (observation_period_id, person_id, observation_period_start_date, observation_period_end_date, period_type_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: payer_plan_period; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.payer_plan_period (payer_plan_period_id, person_id, contract_person_id, payer_plan_period_start_date, payer_plan_period_end_date, payer_concept_id, plan_concept_id, contract_concept_id, sponsor_concept_id, stop_reason_concept_id, payer_source_value, payer_source_concept_id, plan_source_value, plan_source_concept_id, contract_source_value, contract_source_concept_id, sponsor_source_value, sponsor_source_concept_id, family_source_value, stop_reason_source_value, stop_reason_source_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.person (person_id, gender_concept_id, year_of_birth, month_of_birth, day_of_birth, birth_datetime, death_datetime, race_concept_id, ethnicity_concept_id, location_id, provider_id, care_site_id, person_source_value, gender_source_value, gender_source_concept_id, race_source_value, race_source_concept_id, ethnicity_source_value, ethnicity_source_concept_id) FROM stdin;
+143	8532	1941	\N	\N	\N	1970-01-01 00:00:00	0	0	\N	\N	41	\N	\N	0	\N	0	\N	0
+142	8551	1943	\N	\N	\N	2008-09-11 00:00:00	0	0	\N	\N	41	\N	\N	0	\N	0	\N	0
+144	8532	1929	\N	\N	\N	\N	0	0	\N	\N	41	\N	\N	0	\N	0	\N	0
+145	8507	1914	\N	\N	\N	\N	0	0	\N	\N	41	\N	\N	0	\N	0	\N	0
+147	8532	1941	\N	\N	\N	1970-01-01 00:00:00	0	0	\N	\N	43	\N	\N	0	\N	0	\N	0
+146	8551	1943	\N	\N	\N	2008-09-11 00:00:00	0	0	\N	\N	43	\N	\N	0	\N	0	\N	0
+148	8532	1929	\N	\N	\N	\N	0	0	\N	\N	43	\N	\N	0	\N	0	\N	0
+149	8507	1914	\N	\N	\N	\N	0	0	\N	\N	43	\N	\N	0	\N	0	\N	0
+151	8532	1941	\N	\N	\N	1970-01-01 00:00:00	0	0	\N	\N	44	\N	\N	0	\N	0	\N	0
+150	8551	1943	\N	\N	\N	2008-09-11 00:00:00	0	0	\N	\N	44	\N	\N	0	\N	0	\N	0
+152	8532	1929	\N	\N	\N	\N	0	0	\N	\N	44	\N	\N	0	\N	0	\N	0
+153	8507	1914	\N	\N	\N	\N	0	0	\N	\N	44	\N	\N	0	\N	0	\N	0
+155	8532	1941	\N	\N	\N	1970-01-01 00:00:00	0	0	\N	\N	53	\N	\N	0	\N	0	\N	0
+154	8551	1943	\N	\N	\N	2008-09-11 00:00:00	0	0	\N	\N	53	\N	\N	0	\N	0	\N	0
+156	8532	1929	\N	\N	\N	\N	0	0	\N	\N	53	\N	\N	0	\N	0	\N	0
+157	8507	1914	\N	\N	\N	\N	0	0	\N	\N	53	\N	\N	0	\N	0	\N	0
+\.
+
+
+--
+-- Data for Name: person_source_id; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.person_source_id (person_id, source_id, cohort_id) FROM stdin;
+142	001	41
+143	002	41
+144	003	41
+145	004	41
+146	001	43
+147	002	43
+148	003	43
+149	004	43
+150	001	44
+151	002	44
+152	003	44
+153	004	44
+154	001	53
+155	002	53
+156	003	53
+157	004	53
+\.
+
+
+--
+-- Data for Name: procedure_occurrence; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.procedure_occurrence (procedure_occurrence_id, person_id, procedure_concept_id, procedure_date, procedure_datetime, procedure_type_concept_id, modifier_concept_id, quantity, provider_id, visit_occurrence_id, visit_detail_id, procedure_source_value, procedure_source_concept_id, modifier_source_value) FROM stdin;
+\.
+
+
+--
+-- Data for Name: provider; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.provider (provider_id, provider_name, npi, dea, specialty_concept_id, care_site_id, year_of_birth, gender_concept_id, provider_source_value, specialty_source_value, specialty_source_concept_id, gender_source_value, gender_source_concept_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: relationship; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.relationship (relationship_id, relationship_name, is_hierarchical, defines_ancestry, reverse_relationship_id, relationship_concept_id) FROM stdin;
+AMP of	Actual Medicinal Product of (SNOMED)	0	0	Has AMP	45905757
+AMP restr ind of	NHS dm+d (dictionary of medicines and devices) AMP (actual medicinal product) availability restriction indicator of	0	0	Has AMP restr ind	32750
+ARP of	ARP of (SNOMED)	0	0	Has ARP	45905797
+ATC - RxNorm	ATC to RxNorm	0	0	RxNorm - ATC	44818810
+ATC - RxNorm name	ATC to RxNorm equivalent by concept_name (OMOP)	0	0	RxNorm - ATC name	44818926
+ATC - RxNorm pr lat	ATC to RxNorm/Extension primary lateral (OMOP)	0	0	RxNorm - ATC pr lat	32795
+ATC - RxNorm pr up	ATC to RxNorm/Extension primary upwards (OMOP)	0	0	RxNorm - ATC pr up	32799
+ATC - RxNorm sec lat	ATC to RxNorm/Extension secondary lateral (OMOP)	0	0	RxNorm - ATC sec lat	32797
+ATC - RxNorm sec up	ATC to RxNorm/Extension secondary upwards (OMOP)	0	0	RxNorm - ATC sec up	32801
+ATC - SNOMED eq	ATC to SNOMED equivalent (RxNorm)	0	0	SNOMED - ATC eq	45754850
+ATC to NDFRT eq	ATC to NDFRT equivalent (NDF-RT)	0	0	NDFRT to ATC eq	45754838
+ATC to VA Class eq	ATC to VA Class equivalent (NDF-RT)	0	0	VA Class to ATC eq	45754836
+Acc device used by	Access device used by (SNOMED)	0	0	Using acc device	44818895
+Accepted use of	Accepted use of (HemOnc)	0	0	Has accepted use	32787
+Access of	Access of (SNOMED)	0	0	Has access	44818847
+Active ing of	Active ingredient of (SNOMED)	0	0	Has active ing	44818859
+Add monitor ind of	NHS dm+d (dictionary of medicines and devices) additional monitoring indicator of	0	0	Has add monitor ind	32748
+Admin method of	Dose form administration method of (SNOMED)	0	0	Has admin method	581464
+Answer of	Answer of	0	0	Has Answer	45754684
+Answer of (PPI)	Answer of (PPI)	0	0	Has answer (PPI)	32443
+Antineoplastic of	Antineoplastic of (HemOnc)	0	0	Has antineoplastic	32617
+Approach of	Approach of (SNOMED)	0	0	Has approach	45754821
+Asso finding of	Associated finding of (SNOMED)	0	0	Has asso finding	44818868
+Asso morph of	Associated morphology of (SNOMED)	0	0	Has asso morph	44818867
+Asso proc of	Associated procedure of (SNOMED)	0	0	Has asso proc	44818882
+Asso with finding	Associated with finding (SNOMED)	0	0	Finding asso with	44818792
+Available as box	Is available in a prepackaged box (OMOP)	1	1	Box of	223
+Basic dose form of	Basic dose form of (SNOMED)	0	0	Has basic dose form	581460
+Basis str subst of	Basis of strength substance of (SNOMED)	0	0	Has basis str subst	45905750
+Biosimilar of	Biosimilar of	0	0	Has biosimilar	32978
+Box of	Prepackaged box of (OMOP)	1	0	Available as box	224
+Brand name of	Brand name of (OMOP)	1	0	Has brand name	222
+CAP parent item of	CAP parent item of	0	0	Has CAP parent item	32779
+CAP protocol of	CAP protocol of	0	0	Has CAP protocol	32781
+CAP value of	CAP value of	0	0	Has CAP value	32776
+CAP-Nebraska cat	CAP to Nebraska Lexicon category	0	0	Nebraska-CAP cat	32782
+CAP-Nebraska eq	CAP to Nebraska Lexicon equivalent	0	0	Nebraska-CAP eq	32784
+CD category of	Controlled drug cathehory of (DM+D)	0	0	Has CD category	32680
+CI MoA of	Contraindicating mechanism of action of (NDF-RT)	1	0	Has CI MoA	44818830
+CI by	Contraindicated by (NDF-RT)	1	0	CI to	44818833
+CI chem class of	Contraindicating chemical class of (NDF-RT)	1	0	Has CI chem class	44818828
+CI physiol effect by	Contraindicating physiological effect induced by (NDF-RT)	1	0	Has CI physio effect	44818826
+CI to	Contraindication to (NDF-RT)	1	0	CI by	44818735
+CMS Specialty - NUCC	CMS Specialty to NUCC (CMS)	1	0	NUCC - CMS Specialty	44818935
+CPT4 - CVX eq	CPT4 to CVX equivalent (CVX)	0	0	CVX - CPT4 eq	32611
+CPT4 - LOINC eq	CPT4 to LOINC equivalent (SNOMED)	0	0	LOINC - CPT4 eq	45956698
+CPT4 - SNOMED cat	CPT-4 to SNOMED category (OMOP)	1	0	SNOMED cat - CPT4	44818803
+CPT4 - SNOMED eq	CPT-4 to SNOMED equivalent (OMOP)	0	0	SNOMED - CPT4 eq	44818804
+CVX - CPT4 eq	CVX to CPT4 equivalent (CVX)	0	0	CPT4 - CVX eq	32612
+CVX - RxNorm	CVX - RxNorm (OMOP)	1	1	RxNorm - CVX	581403
+Category in Chapter	Category in Chapter	0	0	Chapter has Category	32952
+Category of	Category of	1	1	Has Category	32975
+Causative agent of	Causative agent of (SNOMED)	0	0	Has causative agent	44818866
+Caused by	Caused by (SNOMED)	0	0	Causes	45754810
+Causes	Causes (SNOMED)	0	0	Caused by	45754811
+Chapter has Category	Chapter has Category	0	0	Category in Chapter	32953
+Chapter to ICDO	Chapter to ICDO	0	0	ICDO to Chapter	32954
+Characterizes	Characterizes (SNOMED)	0	0	Is characterized by	5081
+Chem structure of	Chemical structure of (NDF-RT)	1	1	Has chem structure	44818838
+Chem to Prep eq	Chemical Structure to Pharmaceutical Preparation equivalent (NDF-RT)	1	0	Prep to Chem eq	45754841
+Clinical course of	Has clinical course of (SNOMED)	0	0	Has clinical course	44818896
+Combi prod ind of	Combination product indicator of (DM+D)	0	0	Has combi prod ind	32684
+Comp material of	Compositional material of (SNOMED)	0	0	Has comp material	32990
+Component of	Component of	0	0	Has component	44818865
+Conc denom unit of	Concentration strength denominator unit of (SNOMED)	0	0	Has conc denom unit	32436
+Conc denom val of	Concentration strength denominator value of (SNOMED)	0	0	Has conc denom val	32434
+Conc num unit of	Concentration strength numerator unit of (SNOMED)	0	0	Has conc num unit	32438
+Conc num val of	Concentration strength numerator value of (SNOMED)	0	0	Has conc num val	32432
+Concept alt_to from	Active alternative_to inactive (SNOMED)	0	0	Concept alt_to to	44818961
+Concept alt_to to	Inactive alternative_to active (SNOMED)	0	0	Concept alt_to from	44818960
+Concept poss_eq from	Active possibly_equivalent_to inactive (SNOMED)	0	0	Concept poss_eq to	44818963
+Concept poss_eq to	Inactive possibly_equivalent_to active (SNOMED)	0	0	Concept poss_eq from	44818962
+Concept replaced by	Concept replaced by	0	0	Concept replaces	44818956
+Concept replaces	Concept replaces	0	0	Concept replaced by	44818957
+Concept same_as from	Active same_as inactive (SNOMED)	0	0	Concept same_as to	44818959
+Concept same_as to	Inactive same_as active (SNOMED)	0	0	Concept same_as from	44818958
+Concept was_a from	Active was_a inactive (SNOMED)	0	0	Concept was_a to	44818965
+Concept was_a to	Inactive was_a active (SNOMED)	0	0	Concept was_a from	44818964
+Consists of	Consists of (RxNorm)	1	0	Constitutes	44818818
+Constitutes	Constitutes (RxNorm)	1	1	Consists of	44818720
+Contained in	Is contained in (RxNorm)	1	1	Contains	44818819
+Contained in panel	Contained in panel (LOINC)	1	0	Panel contains	46233679
+Contained in version	Table/field contained in OMOP CDM Version (OMOP)	1	1	Version contains	32521
+Contains	Contains (RxNorm)	1	0	Contained in	44818721
+Context of	Context of (HemOnc)	0	0	Has context	32619
+Count of act ing in	Is count of active ingredients in (SNOMED)	0	0	Has count of act ing	32982
+Count of ing of	Count of base of active ingredient of (SNOMED)	0	0	Has count of ing	32442
+Current treated by	Currently treated by (HemOnc)	0	0	Is current in	32791
+DOI - RxNorm	DOI contains RxNorm (OMOP)	1	1	RxNorm - DOI	44818930
+DRG - MDC cat	DRG to MDC category (CMS)	1	0	MDC cat - DRG	44818938
+DRG - MS-DRG eq	DRG to MS-DRG equivalent (CMS)	0	0	MS-DRG - DRG eq	44818936
+Date of variable	Date of variable (NAACCR)	0	0	Variable has date	32659
+Denom value of	Presentation strength denominator value of (SNOMED)	0	0	Has denomin value	581419
+Denominator unit of	Presentation strength denominator unit of (SNOMED)	0	0	Has denominator unit	581417
+Dev intended site of	Device intended site of (SNOMED)	0	0	Has dev intend site	32988
+Device used by	Device used by (SNOMED)	0	0	Using device	44818892
+Diagnosed through	Diagnosed through (NDF-RT)	1	0	May diagnose	44818824
+Dir device of	Direct device of (SNOMED)	0	0	Has dir device	44818864
+Dir morph of	Direct morphology of (SNOMED)	0	0	Has dir morph	44818863
+Dir proc site of	Direct procedure site of (SNOMED)	0	0	Has dir proc site	44818883
+Dir subst of	Direct substance of (SNOMED)	0	0	Has dir subst	44818862
+Direct site of	Direct site of (SNOMED)	0	0	Has direct site	5080
+Disc indicator of	Discontinued indicator of (SNOMED)	0	0	Has disc indicator	45905805
+Disp dose form of	Dispensed dose form of (SNOMED)	0	0	Has disp dose form	45905748
+Disposition of	Disposition of (SNOMED)	0	0	Has disposition	581462
+Domain subsumes	Domain subsumes (OMOP)	1	0	Is domain	44818968
+Dose form group of	Dose form group of (RxNorm)	1	1	Has dose form group	5026
+Dose form of	Dose form of (SNOMED)	0	0	Has dose form	44818880
+Dose form unit of	Unit relating to the size of (DM+D)	0	0	Has dose form unit	45905754
+Drug class of drug	Drug class of drug (OMOP)	1	0	Drug has drug class	233
+Drug has drug class	Drug has drug class (OMOP)	1	0	Drug class of drug	234
+Drug-drug inter for	Drug-drug interaction for (NDF)	0	0	Has drug-drug inter	44818914
+Due to of	Due to of (SNOMED)	0	0	Has due to	44818878
+During	During (SNOMED)	0	0	Has complication	581424
+ETC - RxNorm	ETC to RxNorm (FDB)	1	1	RxNorm - ETC	44818809
+ETC - RxNorm name	ETC to RxNorm equivalent by concept_name (OMOP)	1	1	RxNorm - ETC name	44818924
+End date of	End date of	0	0	Has end date	32712
+Energy used by	Energy used by (SNOMED)	0	0	Using energy	44818893
+Episodicity of	Episodicity of (SNOMED)	0	0	Has episodicity	44818861
+Etiology of	Etiology of (SNOMED)	0	0	Has etiology	45754813
+Excipient of	Excipient of (SNOMED)	0	0	Has excipient	45905790
+Excluded in map from	Standard to Non-standard exclude child (OMOP)	0	0	Map excludes child	44818970
+Extent of	Extent of (SNOMED)	0	0	Has extent	45754817
+FDA indication of	FDA indication of (HemOnc)	0	0	Has FDA indication	32789
+FDB Ind - ICD9CM	FDB Indication/Contraindication to ICD-9-CM (FDB)	0	0	ICD9CM - FDB Ind	44819289
+Filling of	Filling material of (SNOMED)	0	0	Has filling	32992
+Finding asso with	Finding associated with (SNOMED)	0	0	Asso with finding	44818890
+Finding context of	Finding context of (SNOMED)	0	0	Has finding context	44818887
+Finding inform of	Finding informer of (SNOMED)	0	0	Using finding inform	44818899
+Finding method of	Finding method of (SNOMED)	0	0	Using finding method	44818898
+Finding site of	Finding site of (SNOMED)	0	0	Has finding site	44818860
+Flavor of	Flavor of (SNOMED)	0	0	Has flavor	45905803
+Focus of	Focus of (SNOMED)	0	0	Has focus	44818857
+Followed by	Followed by (SNOMED)	0	0	Follows	45905793
+Follows	Follows (SNOMED)	0	0	Followed by	45905792
+Form continuity of	Dose form continuity indicator (DM+D)	0	0	Has form continuity	32686
+Form of	Form of (RxNorm)	0	0	Has form	44818816
+Free indicator of	NHS dm+d freenes indicator of	0	0	Has free indicator	32754
+Freq Code - Typ bill	Frequency code to Typ bill Full (UB04)	0	0	Typ bill - Freq Code	32404
+HCPCS - SNOMED meas	HCPCS is a SNOMED measurement (OMOP)	1	0	SNOMED meas - HCPCS	44818967
+HCPCS - SNOMED proc	HCPCS is a SNOMED procedure (OMOP)	1	0	SNOMED proc - HCPCS	44818921
+HOI - MedDRA	HOI contains MedDRA (OMOP)	1	0	MedDRA - HOI	44818932
+HOI - SNOMED	HOI contains SNOMED (OMOP)	1	1	SNOMED - HOI	44818928
+Has AMP	Has Actual Medicinal Product (SNOMED)	0	0	AMP of	45905745
+Has AMP restr ind	Has NHS dm+d (dictionary of medicines and devices) AMP (actual medicinal product) availability restriction indicator	0	0	AMP restr ind of	32749
+Has ARP	Has ARP (SNOMED)	0	0	ARP of	45905796
+Has Answer	Has Answer	0	0	Answer of	45754683
+Has CAP parent item	Has CAP parent item	0	0	CAP parent item of	32778
+Has CAP protocol	Has CAP protocol	0	0	CAP protocol of	32780
+Has CAP value	Has CAP value	0	0	CAP value of	32777
+Has CD category	Has controlled drug category (DM+D)	0	0	CD category of	32679
+Has CI	Has drug contra-indication (FDB)	0	0	Is CI of	44818808
+Has CI MoA	Has contraindicating mechanism of action (NDF-RT)	1	0	CI MoA of	44818732
+Has CI chem class	Has contraindicating chemical class (NDF-RT)	1	0	CI chem class of	44818730
+Has CI physio effect	Has contraindicating physiological effect (NDF-RT)	1	0	CI physiol effect by	44818728
+Has Category	Has Category	0	0	Category of	32974
+Has FDA indication	Has FDA indication (HemOnc)	0	0	FDA indication of	32788
+Has FDA-appr ind	Has FDA-approved drug indication (FDB)	1	0	Is FDA-appr ind of	44818806
+Has Histology ICDO	Has Histology ICDO	0	0	Histology of ICDO	581427
+Has MoA	Has mechanism of action (NDF-RT)	1	0	MoA of	44818731
+Has Module	Has Module	0	0	Module of	581406
+Has PK	Has pharmacokinetics (NDF-RT)	1	0	PK of	44818733
+Has PPI parent code	Has PPI parent code	0	0	PPI parent code of	32469
+Has Topic	Has Topic	0	0	Topic of	581415
+Has Topography ICDO	Has Topography ICDO	0	0	Topography of ICDO	581429
+Has VMP	Has Virtual Medicinal Product (SNOMED)	0	0	VMP of	45905739
+Has VRP	Has VRP (SNOMED)	0	0	VRP of	45905798
+Has Value	Has Value	0	0	Value of	32972
+Has accepted use	Has accepted use (HemOnc)	0	0	Accepted use of	32786
+Has access	Has access (SNOMED)	0	0	Access of	44818749
+Has active ing	Has active ingredient (SNOMED)	0	0	Active ing of	44818761
+Has add monitor ind	Has NHS dm+d (dictionary of medicines and devices) additional monitoring indicator	0	0	Add monitor ind of	32747
+Has admin method	Has dose form administration method (SNOMED)	0	0	Admin method of	581463
+Has answer (PPI)	Has answer (PPI)	0	0	Answer of (PPI)	32444
+Has antineopl Rx	Has antineoplastic - RxNorm (HemOnc)	1	0	Rx antineopl of	32614
+Has antineoplastic	Has antineoplastic (HemOnc)	0	0	Antineoplastic of	32616
+Has approach	Has Approach (SNOMED)	0	0	Approach of	45754820
+Has asso finding	Has associated finding (SNOMED)	0	0	Asso finding of	44818770
+Has asso morph	Has associated morphology (SNOMED)	0	0	Asso morph of	44818769
+Has asso proc	Has associated procedure (SNOMED)	0	0	Asso proc of	44818784
+Has basic dose form	Has basic dose form (SNOMED)	0	0	Basic dose form of	581459
+Has basis str subst	Has basis of strength substance (SNOMED)	0	0	Basis str subst of	45905738
+Has biosimilar	Has biosimilar	0	0	Biosimilar of	32977
+Has brand name	Has brand name (OMOP)	1	0	Brand name of	221
+Has causative agent	Has causative agent (SNOMED)	0	0	Causative agent of	44818768
+Has chem structure	Has chemical structure (NDF-RT)	1	0	Chem structure of	44818740
+Has clinical course	Has clinical course (SNOMED)	0	0	Clinical course of	44818798
+Has combi prod ind	Has combination product indicator (DM+D)	0	0	Combi prod ind of	32683
+Has comp material	Has compositional material (SNOMED)	0	0	Comp material of	32989
+Has complication	Has complication (SNOMED)	0	0	During	581425
+Has component	Has component	0	0	Component of	44818767
+Has conc denom unit	Has concentration strength denominator unit (SNOMED)	0	0	Conc denom unit of	32435
+Has conc denom val	Has concentration strength denominator value (SNOMED)	0	0	Conc denom val of	32433
+Has conc num unit	Has concentration strength numerator unit (SNOMED)	0	0	Conc num unit of	32437
+Has conc num val	Has concentration strength numerator value (SNOMED)	0	0	Conc num val of	32431
+Has context	Has context (HemOnc)	0	0	Context of	32618
+Has count of act ing	Count of active ingredients (SNOMED)	0	0	Count of act ing in	32981
+Has count of ing	Has count of base of active ingredient (SNOMED)	0	0	Count of ing of	32441
+Has denomin value	Has presentation strength denominator value (SNOMED)	0	0	Denom value of	581418
+Has denominator unit	Has presentation strength denominator unit (SNOMED)	0	0	Denominator unit of	581416
+Has dev intend site	Has device intended site (SNOMED)	0	0	Dev intended site of	32987
+Has dir device	Has direct device (SNOMED)	0	0	Dir device of	44818766
+Has dir morph	Has direct morphology (SNOMED)	0	0	Dir morph of	44818765
+Has dir proc site	Has direct procedure site (SNOMED)	0	0	Dir proc site of	44818785
+Has dir subst	Has direct substance (SNOMED)	0	0	Dir subst of	44818764
+Has direct site	Has direct site (SNOMED)	0	0	Direct site of	5079
+Has disc indicator	Has discontinued indicator (SNOMED)	0	0	Disc indicator of	45905804
+Has disp dose form	Has dispensed dose form (SNOMED)	0	0	Disp dose form of	45905736
+Has disposition	Has disposition (SNOMED)	0	0	Disposition of	581461
+Has dose form	Has dose form (SNOMED)	0	0	Dose form of	44818782
+Has dose form group	Has dose form group (RxNorm)	1	0	Dose form group of	5027
+Has dose form unit	Has unit relating to the size (DM+D)	0	0	Dose form unit of	45905742
+Has drug-drug inter	Is involved in drug-drug interaction (NDF)	0	0	Drug-drug inter for	44818915
+Has due to	Has due to (SNOMED)	0	0	Due to of	44818780
+Has end date	Has end date	0	0	End date of	32711
+Has episodicity	Has episodicity (SNOMED)	0	0	Episodicity of	44818763
+Has etiology	Has Etiology (SNOMED)	0	0	Etiology of	45754812
+Has excipient	Has excipient (SNOMED)	0	0	Excipient of	45905791
+Has extent	Has Extent (SNOMED)	0	0	Extent of	45754816
+Has filling	Has filling (SNOMED)	0	0	Filling of	32991
+Has finding context	Has finding context (SNOMED)	0	0	Finding context of	44818789
+Has finding site	Has finding site (SNOMED)	0	0	Finding site of	44818762
+Has flavor	Has flavor (SNOMED)	0	0	Flavor of	45905802
+Has focus	Has focus (SNOMED)	0	0	Focus of	44818759
+Has form	Has form (RxNorm)	0	0	Form of	44818718
+Has form continuity	Has dose form continuity indicator (DM+D)	0	0	Form continuity of	32685
+Has free indicator	Has NHS dm+d freeness indicator	0	0	Free indicator of	32753
+Has immunosuppr Rx	Has immunosuppressor - RxNorm (HemOnc)	1	0	Rx immunosuppr of	32620
+Has immunosuppressor	Has immunosuppressor (HemOnc)	0	0	Immunosuppressor of	32622
+Has incipient	Has incipient (DM+D)	0	0	Incipient of	45905740
+Has indir device	Has indirect device (SNOMED)	0	0	Indir device of	44818755
+Has indir morph	Has indirect morphology (SNOMED)	0	0	Indir morph of	44818754
+Has indir proc site	Has indirect procedure site (SNOMED)	0	0	Indir proc site of	44818786
+Has inferred class	Has inferred drug class (OMOP)	1	0	Inferred class of	44818919
+Has inherent	Has inherent (SNOMED)	0	0	Inheres in	5078
+Has inherent loc	Has inherent location (SNOMED)	0	0	Inherent location of	5067
+Has intended site	Has dose form intended site (SNOMED)	0	0	Intended site of	581465
+Has intent	Has intent (SNOMED)	0	0	Intent of	44818758
+Has interpretation	Has interpretation (SNOMED)	0	0	Interpretation of	44818757
+Has interprets	Has interprets (SNOMED)	0	0	Interprets of	44818753
+Has kind	Has kind (LOINC)	0	0	Kind of	32460
+Has laterality	Has laterality (SNOMED)	0	0	Laterality of	44818752
+Has legal category	Has legal category (SNOMED)	0	0	Legal category of	45905812
+Has licensed route	Has licensed route (DM+D)	0	0	Licensed route of	45905741
+Has life circumstan	Has life circumstance (SNOMED Vet)	0	0	Life circumstan of	32555
+Has local therap Rx	Has local therapy - RxNorm (HemOnc)	1	0	Rx local therapy of	32624
+Has local therapy	Has local therapy (HemOnc)	0	0	Local therapy of	32626
+Has manifestation	Has definitional manifestation (SNOMED)	0	0	Manifestation of	44818760
+Has marketed form	Has marketed form (OMOP)	1	1	Marketed form of	246
+Has meas component	Has Measured Component (SNOMED)	0	0	Meas component of	45754808
+Has measurement	Has measurement method (SNOMED)	0	0	Measurement of	44818771
+Has metabolism	Has site of metabolism (NDF-RT)	1	0	Metabolism of	44818738
+Has metabolites	Has active metabolites (NDF-RT)	1	0	Metabolite of	44818737
+Has method	Has method	0	0	Method of	44818751
+Has modality	Has modality (HemOnc)	1	0	Modality of	32691
+Has modification	Has modification of (SNOMED)	0	0	Modification of	32440
+Has morphology	Has Morphology (SNOMED)	0	0	Morphology of	45754806
+Has non-avail ind	Has VMP non-availability indicator (SNOMED)	0	0	Non-avail ind of	45905794
+Has numerator unit	Has presentation strength numerator unit (SNOMED)	0	0	Numerator unit of	581420
+Has numerator value	Has presentation strength numerator value (SNOMED)	0	0	Numerator value of	581422
+Has occurrence	Has occurrence (SNOMED)	0	0	Occurrence of	44818750
+Has off-label ind	Has off-label drug indication (FDB)	1	0	Is off-label ind of	44818807
+Has ontological form	Has ontological dose form presentation (DM+D)	0	0	Ontological form of	32681
+Has pack	Has pack (SNOMED)	0	0	Is pack of	45905758
+Has parent item	Has parent item (NAACCR)	0	0	Parent item of	32656
+Has part of	Has part of (SNOMED)	0	0	Part of	44818746
+Has pathology	Has pathological process (SNOMED)	0	0	Pathology of	44818745
+Has permiss range	Has permissible range	0	0	Permiss range of	32664
+Has pharma prep	Has pharmaceutical preparation (NDF)	0	0	Pharma prep in	44818916
+Has physio effect	Has physiological effect (NDF-RT)	1	0	Physiol effect by	44818727
+Has physiol state	Has physiologic state (SNOMED Vet)	0	0	Physiol state of	32551
+Has prec ingredient	Has precise active ingredient (SNOMED)	0	0	Prec ingredient of	32427
+Has precise ing	Has precise ingredient (RxNorm)	0	0	Precise ing of	44818715
+Has precondition	Has precondition (SNOMED)	0	0	Precondition of	5065
+Has precoord pair	Has precoordinated (Question-Answer/Variable-Value) pair	0	0	Precoord pair of	32970
+Has priority	Has priority (SNOMED)	0	0	Priority of	44818744
+Has proc context	Has procedure context (SNOMED)	0	0	Proc context of	44818790
+Has proc device	Has procedure device (SNOMED)	0	0	Proc device of	44818787
+Has proc duration	Process duration	0	0	Proc duration of	32755
+Has proc morph	Has procedure morphology (SNOMED)	0	0	Proc morph of	44818788
+Has proc site	Has procedure site (SNOMED)	0	0	Proc site of	44818743
+Has process output	Has process output (SNOMED)	0	0	Process output of	5073
+Has prod character	Has product characteristic (SNOMED)	0	0	Prod character of	32983
+Has product comp	Has product component (NDF-RT)	1	0	Product comp of	45754851
+Has property	Has property	0	0	Property of	44818772
+Has property type	Has property type	0	0	Property type of	5075
+Has quantified form	Has quantified form (RxNorm)	0	1	Quantified form of	45754827
+Has question source	Has question source	0	0	Question source of	32803
+Has recipient cat	Has recipient category (SNOMED)	0	0	Recipient cat of	44818742
+Has regimen type	Has regimen type (HemOnc)	1	0	Regimen type of	32628
+Has relat context	Has subject relationship context (SNOMED)	0	0	Relat context of	44818781
+Has relative part	Has relative part (SNOMED)	0	0	Relative part of	5071
+Has release charact	Has dose form release characteristic (SNOMED)	0	0	Release charact of	581467
+Has revision status	Has revision status (SNOMED)	0	0	Revision status of	44818748
+Has role	Has role (LOINC)	0	0	Role of	32458
+Has route	Has route (DM+D)	0	0	Route of	45905744
+Has route of admin	Has route of administration (SNOMED)	0	0	Route of admin of	44818799
+Has scale type	Has scale type	0	0	Scale type of	44818773
+Has setting	Has setting (LOINC)	0	0	Setting of	32462
+Has severity	Has severity (SNOMED)	0	0	Severity of	44818747
+Has spec active ing	Has specific active ingredient (SNOMED)	0	0	Spec active ing of	45905737
+Has specimen	Has specimen (SNOMED)	0	0	Specimen of	44818756
+Has specimen morph	Has specimen source morphology (SNOMED)	0	0	Specimen morph of	44818777
+Has specimen proc	Has specimen procedure (SNOMED)	0	0	Specimen proc of	44818775
+Has specimen source	Has specimen source identity (SNOMED)	0	0	Specimen identity of	44818776
+Has specimen subst	Has specimen substance (SNOMED)	0	0	Specimen subst of	44818779
+Has specimen topo	Has specimen source topography (SNOMED)	0	0	Specimen topo of	44818778
+Has stage	Has Stage (SNOMED)	0	0	Stage of	45754814
+Has standard brand	Has standard Brand Name (OMOP)	0	0	Is standard brand of	228
+Has standard form	Has standard Dose Form (OMOP)	0	0	Is standard form of	230
+Has standard ing	Has standard ingredient (OMOP)	0	0	Is standard ing of	226
+Has start date	Has start date	0	0	Start date of	32713
+Has state of matter	Has state of matter (SNOMED)	0	0	State of matter of	581471
+Has sub-specimen	Includes sub-specimen (SNOMED Vet)	1	1	Sub-specimen of	32553
+Has subject matter	Has subject matter domain (LOINC)	0	0	Subject matter of	32454
+Has supplier	Has supplier or manufacturer (OMOP)	0	0	Supplier of	248
+Has support med Rx	Has supportive medication - RxNorm (HemOnc)	1	0	Rx support med of	32630
+Has supportive med	Has supportive medication (HemOnc)	0	0	Supportive med of	32632
+Has surface char	Has surface characteristic (SNOMED)	0	0	Surf character of	32985
+Has surgical appr	Has surgical approach (SNOMED)	0	0	Surgical appr of	44818793
+Has system	Has system	0	0	System of	32715
+Has technique	Has technique (SNOMED)	0	0	Technique of	5069
+Has temp finding	Has temporal finding (SNOMED)	0	0	Temp related to	581474
+Has temporal context	Has temporal context (SNOMED)	0	0	Temporal context of	44818791
+Has therap class	Has therapeutic class (NDF)	0	0	Therap class of	44818912
+Has time aspect	Has time aspect	0	0	Time aspect of	44818774
+Has trade family grp	Has trade family group (SNOMED)	0	0	Trade family grp of	45905747
+Has tradename	Has tradename (RxNorm)	0	1	Tradename of	44818716
+Has transformation	Has dose form transformation (SNOMED)	0	0	Transformation of	581469
+Has type	Has type	0	0	Type of	32672
+Has type of service	Has type of service (LOINC)	0	0	Type of service of	32456
+Has unit	Has unit	0	0	Unit of	32670
+Has unit of admin	Has unit of administration (SNOMED)	0	0	Unit of admin of	32409
+Has unit of presen	Has unit of presentation (SNOMED)	0	0	Unit of presen of	32429
+Has unit of prod use	Has unit relating to the entity that can be handled (DM+D)	0	0	Unit of prod use of	45905743
+Has vaccine group	Has vaccine group (CVX)	0	0	Vaccine group of	32609
+Histology of ICDO	Histology of ICDO	0	0	Has Histology ICDO	581428
+Historic treated by	Historically treated by (HemOnc)	0	0	Is historical in	32793
+ICD9CM - FDB Ind	ICD-9-CM to FDB Indication/Contraindication (FDB)	0	0	FDB Ind - ICD9CM	44819288
+ICD9CM - MedDRA	ICD-9-CM to MedDRA (MSSO)	0	0	MedDRA - ICD9CM	44819286
+ICD9P - SNOMED eq	ICD-9-Procedure to SNOMED equivalent (OMOP)	0	0	SNOMED - ICD9P eq	44818802
+ICD9P replaced by	Concept replaced by (ICD-9-Procedure)	0	0	ICD9P replaces	44818971
+ICD9P replaces	Concept replaces (ICD-9-Procedure)	0	0	ICD9P replaced by	44818972
+ICDO - SNOMED	ICDO - SNOMED	0	0	SNOMED - ICDO	581431
+ICDO to Chapter	ICDO to Chapter	0	0	Chapter to ICDO	32955
+ICDO to Proc Schema	ICDO Condition to Procedure Schema (NAACCR)	0	0	Proc Schema to ICDO	32644
+ICDO to Schema	ICDO Condition to Schema (NAACCR)	0	0	Schema to ICDO	32646
+Immunosuppressor of	Immunosuppressor of (HemOnc)	0	0	Has immunosuppressor	32623
+Incipient of	Incipient of (DM+D)	0	0	Has incipient	45905752
+Included in map from	Standard to Non-standard include child (OMOP)	0	0	Map includes child	44818973
+Ind/CI - SNOMED	Indication/Contra-indication to SNOMED	0	0	SNOMED - ind/CI	44818910
+Indir device of	Indirect device of (SNOMED)	0	0	Has indir device	44818853
+Indir morph of	Indirect morphology of (SNOMED)	0	0	Has indir morph	44818852
+Indir proc site of	Indirect procedure site of (SNOMED)	0	0	Has indir proc site	44818884
+Induced by	Induced by (NDF-RT)	1	0	Induces	44818823
+Induces	Induces (NDF-RT)	1	0	Induced by	44818725
+Inferred class of	Inferred drug class of (OMOP)	1	1	Has inferred class	44818918
+Inherent location of	Inherent location of (SNOMED)	0	0	Has inherent loc	5068
+Inheres in	Inheres in (SNOMED)	0	0	Has inherent	5077
+Inhibits effect	Inhibits effect (NDF-RT)	1	0	May be inhibited by	44818837
+Intended site of	Dose form intended site of (SNOMED)	0	0	Has intended site	581466
+Intent of	Intent of (SNOMED)	0	0	Has intent	44818856
+Interpretation of	Interpretation of (SNOMED)	0	0	Has interpretation	44818855
+Interprets of	Interprets of (SNOMED)	0	0	Has interprets	44818851
+Is CI of	Is contra-indication of (FDB)	0	0	Has CI	44818906
+Is FDA-appr ind of	Is FDA-approved indication of (FDB)	1	1	Has FDA-appr ind	44818904
+Is a	Is a	0	0	Subsumes	44818821
+Is characterized by	Is characterized by (SNOMED)	0	0	Characterizes	5082
+Is current in	Is currently used in (HemOnc)	0	0	Current treated by	32790
+Is domain	Is a domain (OMOP)	1	0	Domain subsumes	44818969
+Is historical in	Is historically used in (HemOnc)	0	0	Historic treated by	32792
+Is off-label ind of	Is off-label indication of (FDB)	1	1	Has off-label ind	44818905
+Is pack of	Is pack of (SNOMED)	0	0	Has pack	45905746
+Is standard brand of	Is standard Brand Name of (OMOP)	0	0	Has standard brand	227
+Is standard form of	Is standard Dose Form of (OMOP)	0	0	Has standard form	229
+Is standard ing of	Is standard ingredient of ingredient (OMOP)	1	1	Has standard ing	225
+Is transcribed from	mRNA is transcribed from genomic DNA	1	1	Transcribes to	32920
+Is translated from	Protein is translated from mRNA	1	1	Translates to	32922
+Kind of	Kind of (LOINC)	0	0	Has kind	32461
+LOINC - CPT4 eq	LOINC to CPT4 equivalent (SNOMED)	0	0	CPT4 - LOINC eq	45956697
+LOINC - SNOMED eq	LOINC Hierarchy to SNOMED equivalent (LOINC)	0	0	SNOMED - LOINC eq	45956695
+LOINC replaced by	Concept replaced by (LOINC)	0	0	LOINC replaces	44818714
+LOINC replaces	Concept replaces (LOINC)	0	0	LOINC replaced by	44818812
+Laterality of	Laterality of (SNOMED)	0	0	Has laterality	44818850
+Legal category of	Legal category of (SNOMED)	0	0	Has legal category	45905813
+Licensed route of	Licensed route of (DM+D)	0	0	Has licensed route	45905753
+Life circumstan of	Life circumstance (SNOMED Vet)	0	0	Has life circumstan	32556
+Local therapy of	Local therapy of (HemOnc)	0	0	Has local therapy	32627
+MDC cat - DRG	MDC category to DRG (CMS)	1	1	DRG - MDC cat	44818939
+MS-DRG - DRG eq	MS-DRG to DRG equivalent (CMS)	0	0	DRG - MS-DRG eq	44818937
+Manifestation of	Definitional manifestation of (SNOMED)	0	0	Has manifestation	44818858
+Map excludes child	Non-standard to Standard exclude child (OMOP)	0	0	Excluded in map from	44818974
+Map includes child	Non-standard to Standard include child (OMOP)	0	0	Included in map from	44818975
+Mapped from	Standard to Non-standard map (OMOP)	0	0	Maps to	44818976
+Maps to	Non-standard to Standard map (OMOP)	0	0	Mapped from	44818977
+Maps to number	Non-standard to value_as_number map (OMOP)	0	0	Number mapped from	45754885
+Maps to operator	Non-standard to operator concept map (OMOP)	0	0	Operator mapped from	45754883
+Maps to type	Non-standard to type concept map (OMOP)	0	0	Type mapped from	44819237
+Maps to unit	Non-standard to unit concept map (OMOP)	0	0	Unit mapped from	44819238
+Maps to value	Non-standard to value_as_concept map (OMOP)	0	0	Value mapped from	44819239
+Marketed form of	Marketed form of (OMOP)	1	0	Has marketed form	247
+May be inhibited by	Effect may be inhibited by (NDF-RT)	1	0	Inhibits effect	44818739
+May be prevented by	May be prevented by (NDF-RT)	1	1	May prevent	44818834
+May be route of	May be route of (HemOnc)	0	0	May have route	32635
+May be treated by	May be treated by (NDF-RT)	1	1	May treat	44818832
+May diagnose	May diagnose (NDF-RT)	1	0	Diagnosed through	44818726
+May have route	May have route (HemOnc)	0	0	May be route of	32634
+May prevent	May prevent (NDF-RT)	1	0	May be prevented by	44818736
+May treat	May treat (NDF-RT)	1	0	May be treated by	44818734
+Meas component of	Measured Component of (SNOMED)	0	0	Has meas component	45754809
+Measurement of	Measurement method of (SNOMED)	0	0	Has measurement	44818869
+MedDRA - HOI	MedDRA contained in HOI (OMOP)	1	0	HOI - MedDRA	44818933
+MedDRA - ICD9CM	MedDRA to ICD-9-CM (MSSO)	0	0	ICD9CM - MedDRA	44819287
+MedDRA - SMQ	MedDRA contained in SMQ (MedDRA)	0	0	SMQ - MedDRA	44818909
+MedDRA - SNOMED eq	MedDRA to SNOMED equivalent (OMOP)	0	1	SNOMED - MedDRA eq	44818805
+Metabolism of	Site of metabolism of (NDF-RT)	1	0	Has metabolism	44818836
+Metabolite of	Active metabolite of (NDF-RT)	1	0	Has metabolites	44818835
+Method of	Method of	0	0	Has method	44818849
+MoA of	Mechanism of action of (NDF-RT)	1	1	Has MoA	44818829
+Modality of	Modality of (Hemonc)	1	1	Has modality	32692
+Modification of	Is modification of (SNOMED)	0	0	Has modification	32439
+Module of	Module of	1	1	Has Module	581405
+Morphology of	Morphology of (SNOMED)	0	0	Has morphology	45754807
+Multilex has ing	Has ingredient (Multilex)	0	0	Multilex ing of	44818950
+Multilex ing of	Ingredient of (Multilex)	0	0	Multilex has ing	44818951
+NDFRT - RxNorm eq	NDF-RT to RxNorm equivalent (RxNorm)	1	1	RxNorm - NDFRT eq	44818741
+NDFRT - RxNorm name	NDF-RT to RxNorm equivalent by concept_name (OMOP)	1	1	RxNorm - NDFRT name	44818923
+NDFRT - SNOMED eq	NDF-RT to SNOMED equivalent (RxNorm)	0	0	SNOMED - NDFRT eq	45754846
+NDFRT - VAProd	NDF-RT to VA Product (NDF-RT)	0	0	VAProd - NDFRT	44818943
+NDFRT dose form of	Dose form of (NDF-RT)	1	0	NDFRT has dose form	44818822
+NDFRT has dose form	Has dose form (NDF-RT)	1	0	NDFRT dose form of	44818724
+NDFRT has ing	Has ingredient (NDF-RT)	1	0	NDFRT ing of	44818729
+NDFRT ing of	Ingredient of (NDF-RT)	1	1	NDFRT has ing	44818827
+NDFRT to ATC eq	NDFRT to ATC equivalent (NDF-RT)	0	0	ATC to NDFRT eq	45754837
+NDFRT to VA Class eq	NDFRT to VA Class equivalent (NDF-RT)	0	0	VA Class to NDFRT eq	45754840
+NUCC - CMS Specialty	NUCC to CMS Specialty (CMS)	1	1	CMS Specialty - NUCC	44818934
+Nebraska-CAP cat	Nebraska Lexicon to CAP category	0	0	CAP-Nebraska cat	32783
+Nebraska-CAP eq	Nebraska Lexicon to CAP equivalent	0	0	CAP-Nebraska eq	32785
+Non-avail ind of	VMP non-availability indicator of (SNOMED)	0	0	Has non-avail ind	45905795
+Number mapped from	Value_as_number to non-standard map (OMOP)	0	0	Maps to number	45754886
+Numerator unit of	Presentation strength numerator unit of (SNOMED)	0	0	Has numerator unit	581421
+Numerator value of	Presentation strength numerator value of (SNOMED)	0	0	Has numerator value	581423
+OPCS4 - SNOMED	OPCS4 to SNOMED equivalent or categorical (NHS)	1	0	SNOMED - OPCS4	45956699
+Occurrence of	Occurrence of (SNOMED)	0	0	Has occurrence	44818848
+Occurs after	Occurs after (SNOMED)	0	0	Occurs before	44818783
+Occurs before	Occurs before (SNOMED)	0	0	Occurs after	44818881
+Ontological form of	Ontological dose form presentation of (DM+D)	0	0	Has ontological form	32682
+Operator mapped from	Operator concept to non-standard map (OMOP)	0	0	Maps to operator	45754884
+PK of	Pharmacokinetics of (NDF-RT)	1	0	Has PK	44818831
+PPI parent code of	PPI parent code of	0	0	Has PPI parent code	32470
+Panel contains	Panel contains (LOINC)	1	1	Contained in panel	46233678
+Paral imprt ind	Has NHS dm+d parallel import indicator	0	0	Paral imprt of	32751
+Paral imprt of	NHS dm+d parallel import indicator of	0	0	Paral imprt ind	32752
+Parent item of	Parent item of (NAACCR)	0	0	Has parent item	32657
+Part of	Part of (SNOMED)	0	0	Has part of	44818844
+Pathology of	Pathological process of (SNOMED)	0	0	Has pathology	44818843
+Permiss range of	Permissible range of	0	0	Has permiss range	32665
+Pharma prep in	Pharmaceutical preparation contained in (NDF)	1	1	Has pharma prep	44818917
+Physiol effect by	Physiological effect induced by (NDF-RT)	1	1	Has physio effect	44818825
+Physiol state of	Physiologic state of (SNOMED Vet)	0	0	Has physiol state	32552
+Plays role	Plays role	0	0	Role played by	32539
+PoS - Visit cat	Place of Service to Visit category (OMOP)	1	0	Visit cat - PoS	44818941
+Prec ingredient of	Precise active ingredient of (SNOMED)	0	0	Has prec ingredient	32428
+Precise ing of	Precise ingredient of (RxNorm)	0	0	Has precise ing	44818813
+Precondition of	Precondition of (SNOMED)	0	0	Has precondition	5066
+Precoord pair of	Precoordinated (Question-Answer/Variable-Value) pair of	0	0	Has precoord pair	32971
+Prep to Chem eq	Pharmaceutical Preparation to Chemical Structure equivalent (NDF-RT)	0	0	Chem to Prep eq	45754842
+Priority of	Priority of (SNOMED)	0	0	Has priority	44818842
+Proc Schema to ICDO	Procedure Schema to ICDO Condition (NAACCR)	0	0	ICDO to Proc Schema	32643
+Proc context of	Procedure context of (SNOMED)	0	0	Has proc context	44818888
+Proc device of	Procedure device of (SNOMED)	0	0	Has proc device	44818885
+Proc duration of	Process duration of	0	0	Has proc duration	32756
+Proc morph of	Procedure morphology of (SNOMED)	0	0	Has proc morph	44818886
+Proc site of	Procedure site of (SNOMED)	0	0	Has proc site	44818841
+Process output of	Process output of (SNOMED)	0	0	Has process output	5074
+Prod character of	Product characteristic of (SNOMED)	0	0	Has prod character	32984
+Product comp of	Product component of (NDF-RT)	1	1	Has product comp	45754852
+Property of	Property of	0	0	Has property	44818870
+Property type of	Property type of	0	0	Has property type	5076
+Quantified form of	Quantified form of (RxNorm)	0	0	Has quantified form	45754828
+Question source of	Question source of	0	0	Has question source	32804
+Recipient cat of	Recipient category of (SNOMED)	0	0	Has recipient cat	44818840
+Reformulated in	Reformulated in (RxNorm)	0	1	Reformulation of	44818820
+Reformulation of	Reformulation of (RxNorm)	0	0	Reformulated in	44818722
+Regimen type of	Regimen type of (HemOnc)	1	1	Has regimen type	32629
+Relat context of	Subject relationship context of (SNOMED)	0	0	Has relat context	44818879
+Relative part of	Relative part of (SNOMED)	0	0	Has relative part	5072
+Relative to	Relative to (SNOMED)	0	0	Relative to of	32979
+Relative to of	Relative to of (SNOMED)	0	0	Relative to	32980
+Release charact of	Dose form release characteristic of (SNOMED)	0	0	Has release charact	581468
+Revision status of	Revision status of (SNOMED)	0	0	Has revision status	44818846
+Role of	Role of (LOINC)	0	0	Has role	32459
+Role played by	Role played by	0	0	Plays role	32540
+Route of	Route of (DM+D)	0	0	Has route	45905756
+Route of admin of	Route of administration of (SNOMED)	0	0	Has route of admin	44818897
+Rx antineopl of	RxNorm antineoplastic of (HemOnc)	1	1	Has antineopl Rx	32615
+Rx immunosuppr of	RxNorm immunosuppressor of (HemOnc)	1	1	Has immunosuppr Rx	32621
+Rx local therapy of	RxNorm local therapy of (HemOnc)	1	1	Has local therap Rx	32625
+Rx support med of	RxNorm Supportive medication of (HemOnc)	1	1	Has support med Rx	32631
+RxNorm - ATC	RxNorm to ATC	0	0	ATC - RxNorm	44818908
+RxNorm - ATC name	RxNorm to ATC equivalent by concept_name (OMOP)	0	0	ATC - RxNorm name	44818927
+RxNorm - ATC pr lat	RxNorm/Extension to ATC pr lateral (OMOP)	0	0	ATC - RxNorm pr lat	32796
+RxNorm - ATC pr up	RxNorm/Extension to ATC primary upwards (OMOP)	0	0	ATC - RxNorm pr up	32800
+RxNorm - ATC sec lat	RxNorm/Extension to ATC secondary lateral (OMOP)	0	0	ATC - RxNorm sec lat	32798
+RxNorm - ATC sec up	RxNorm/Extension to ATC secondary upwards (OMOP)	0	0	ATC - RxNorm sec up	32802
+RxNorm - CVX	RxNorm - CVX (OMOP)	1	0	CVX - RxNorm	581402
+RxNorm - DOI	RxNorm contained in DOI (OMOP)	1	0	DOI - RxNorm	44818931
+RxNorm - ETC	RxNorm to ETC (FDB)	1	0	ETC - RxNorm	44818907
+RxNorm - ETC name	RxNorm to ETC equivalent by concept_name (OMOP)	0	0	ETC - RxNorm name	44818925
+RxNorm - NDFRT eq	RxNorm to NDF-RT equivalent (RxNorm)	0	0	NDFRT - RxNorm eq	44818839
+RxNorm - NDFRT name	RxNorm to NDF-RT equivalent by concept_name (OMOP)	0	0	NDFRT - RxNorm name	44818922
+RxNorm - SNOMED eq	RxNorm to SNOMED equivalent (RxNorm)	0	0	SNOMED - RxNorm eq	45754844
+RxNorm - SPL	RxNorm to SPL (NLM)	1	0	SPL - RxNorm	45754867
+RxNorm - Source eq	RxNorm to Drug Source equivalent (OMOP)	0	0	Source - RxNorm eq	44818952
+RxNorm - VAProd eq	RxNorm to VA Product equivalent (NDF-RT)	0	0	VAProd - RxNorm eq	44818945
+RxNorm dose form of	Dose form of (RxNorm)	1	0	RxNorm has dose form	44818815
+RxNorm has dose form	Has dose form (RxNorm)	1	0	RxNorm dose form of	44818717
+RxNorm has ing	Has ingredient (RxNorm)	1	0	RxNorm ing of	44818719
+RxNorm ing of	Ingredient of (RxNorm)	1	1	RxNorm has ing	44818817
+RxNorm inverse is a	Inverse is a (RxNorm)	1	1	RxNorm is a	45754830
+RxNorm is a	Is a (RxNorm)	1	0	RxNorm inverse is a	45754829
+RxNorm replaced by	Concept replaced by (RxNorm)	0	0	RxNorm replaces	44818946
+RxNorm replaces	Concept replaces (RxNorm)	0	0	RxNorm replaced by	44818947
+SMQ - MedDRA	SMQ consists of MedDRA (MedDRA)	0	0	MedDRA - SMQ	44818811
+SNOMED - ATC eq	SNOMED to ATC equivalent (RxNorm)	0	0	ATC - SNOMED eq	45754849
+SNOMED - CPT4 eq	SNOMED to CPT-4 equivalent (OMOP)	0	1	CPT4 - SNOMED eq	44818902
+SNOMED - HOI	SNOMED contained in HOI (OMOP)	1	0	HOI - SNOMED	44818929
+SNOMED - ICD9P eq	SNOMED to ICD-9-Procedure equivalent (OMOP)	0	1	ICD9P - SNOMED eq	44818900
+SNOMED - ICDO	SNOMED - ICDO	0	0	ICDO - SNOMED	581432
+SNOMED - LOINC eq	SNOMED to LOINC Hierarchy equivalent (LOINC)	0	0	LOINC - SNOMED eq	45956696
+SNOMED - MedDRA eq	SNOMED to MedDRA equivalent (OMOP)	0	0	MedDRA - SNOMED eq	44818903
+SNOMED - NDFRT eq	SNOMED to NDF-RT equivalent (RxNorm)	0	0	NDFRT - SNOMED eq	45754845
+SNOMED - OPCS4	SNOMED to OPCS4 equivalent or categorical (NHS)	1	1	OPCS4 - SNOMED	45956700
+SNOMED - RxNorm eq	SNOMED to RxNorm equivalent (RxNorm)	0	0	RxNorm - SNOMED eq	45754843
+SNOMED - VA Class eq	SNOMED to VA Class equivalent (RxNorm)	0	0	VA Class - SNOMED eq	45754847
+SNOMED - ind/CI	SNOMED to Indication/Contra-indication	0	0	Ind/CI - SNOMED	44818911
+SNOMED cat - CPT4	SNOMED category to CPT-4 (OMOP)	1	1	CPT4 - SNOMED cat	44818901
+SNOMED meas - HCPCS	SNOMED measurement subsumes HCPCS (OMOP)	1	1	HCPCS - SNOMED meas	44818966
+SNOMED proc - HCPCS	SNOMED procedure subsumes HCPCS (OMOP)	1	1	HCPCS - SNOMED proc	44818920
+SPL - RxNorm	SPL to RxNorm (NLM)	1	1	RxNorm - SPL	45754866
+Scale type of	Scale type of	0	0	Has scale type	44818871
+Schema to ICDO	Schema to ICDO Condition (NAACCR)	0	0	ICDO to Schema	32645
+Schema to Value	Schema to Value (NAACCR)	0	0	Value to Schema	32647
+Schema to Variable	Schema to Variable (NAACCR)	0	0	Variable to Schema	32649
+Setting of	Setting of (LOINC)	0	0	Has setting	32463
+Severity of	Severity of (SNOMED)	0	0	Has severity	44818845
+Source - RxNorm eq	Drug Source to RxNorm equivalent (OMOP)	0	1	RxNorm - Source eq	44818953
+Spec active ing of	Specific active ingredient of (SNOMED)	0	0	Has spec active ing	45905749
+Specimen identity of	Specimen source identity of (SNOMED)	0	0	Has specimen source	44818874
+Specimen morph of	Specimen source morphology of (SNOMED)	0	0	Has specimen morph	44818875
+Specimen of	Specimen of (SNOMED)	0	0	Has specimen	44818854
+Specimen proc of	Specimen procedure of (SNOMED)	0	0	Has specimen proc	44818873
+Specimen subst of	Specimen substance of (SNOMED)	0	0	Has specimen subst	44818877
+Specimen topo of	Specimen source topography of (SNOMED)	0	0	Has specimen topo	44818876
+Stage of	Stage of (SNOMED)	0	0	Has stage	45754815
+Start date of	Start date of	0	0	Has start date	32714
+State of matter of	State of matter of (SNOMED)	0	0	Has state of matter	581472
+Sub-specimen of	Sub-specimen of (SNOMED Vet)	1	0	Has sub-specimen	32554
+Subject matter of	Subject matter domain of (LOINC)	0	0	Has subject matter	32455
+Subst used by	Substance used by (SNOMED)	0	0	Using subst	44818894
+Subsumes	Subsumes	1	1	Is a	44818723
+Supplier of	Supplier or manufacturer of (OMOP)	0	0	Has supplier	249
+Supportive med of	Supportive medication of (HemOnc)	0	0	Has supportive med	32633
+Surf character of	Surface characteristic of (SNOMED)	0	0	Has surface char	32986
+Surgical appr of	Surgical approach of (SNOMED)	0	0	Has surgical appr	44818891
+System of	System of	0	0	Has system	32716
+Technique of	Technique of (SNOMED)	0	0	Has technique	5070
+Temp related to	Temporally related to (SNOMED)	0	0	Has temp finding	581473
+Temporal context of	Temporal context of (SNOMED)	0	0	Has temporal context	44818889
+Therap class of	Therapeutic class of (NDF)	1	1	Has therap class	44818913
+Time aspect of	Time aspect of	0	0	Has time aspect	44818872
+Topic of	Topic of	1	1	Has Topic	581414
+Topography of ICDO	Topography of ICDO	0	0	Has Topography ICDO	581430
+Trade family grp of	Trade family group of (SNOMED)	0	0	Has trade family grp	45905759
+Tradename of	Tradename of (RxNorm)	0	0	Has tradename	44818814
+Transcribes to	Genomic DNA transcribes to mRNA	0	0	Is transcribed from	32919
+Transformation of	Dose form transformation of (SNOMED)	0	0	Has transformation	581470
+Translates to	mRNA Translates to protein	0	0	Is translated from	32921
+Typ bill - Freq Code	Typ bill Full to Frequency code (UB04)	0	0	Freq Code - Typ bill	32403
+Typ bill - Typ bill3	Typ bill Full to Typ bill 3 digits (UB04)	0	0	Typ bill3 - Typ bill	32405
+Typ bill3 - Typ bill	Typ bill 3 digits to Typ bill Full (UB04)	0	0	Typ bill - Typ bill3	32406
+Type mapped from	Type concept to non-standard map (OMOP)	0	0	Maps to type	44819240
+Type of	Type of	0	0	Has type	32673
+Type of service of	Type of service of (LOINC)	0	0	Has type of service	32457
+UCUM replaced by	Concept replaced by (UCUM)	0	0	UCUM replaces	44818978
+UCUM replaces	Concept replaces (UCUM)	0	0	UCUM replaced by	44818979
+Unit mapped from	Unit concept to non-standard map (OMOP)	0	0	Maps to unit	44819241
+Unit of	Unit of	0	0	Has unit	32671
+Unit of admin of	Unit of administration of (SNOMED)	0	0	Has unit of admin	32410
+Unit of presen of	Unit of presentation of (SNOMED)	0	0	Has unit of presen	32430
+Unit of prod use of	Unit relating to the entity that can be handled of (DM+D)	0	0	Has unit of prod use	45905755
+Using acc device	Using access device (SNOMED)	0	0	Acc device used by	44818797
+Using device	Using device (SNOMED)	0	0	Device used by	44818794
+Using energy	Using energy (SNOMED)	0	0	Energy used by	44818795
+Using finding inform	Using finding informer (SNOMED)	0	0	Finding inform of	44818801
+Using finding method	Using finding method (SNOMED)	0	0	Finding method of	44818800
+Using subst	Using substance (SNOMED)	0	0	Subst used by	44818796
+VA Class - SNOMED eq	VA Class to SNOMED equivalent (RxNorm)	0	0	SNOMED - VA Class eq	45754848
+VA Class to ATC eq	VA Class to ATC equivalent (NDF-RT)	0	0	ATC to VA Class eq	45754835
+VA Class to NDFRT eq	VA Class to NDFRT equivalent (NDF-RT)	0	0	NDFRT to VA Class eq	45754839
+VAProd - NDFRT	VA Product to NDF-RT (NDF-RT)	0	0	NDFRT - VAProd	44818942
+VAProd - RxNorm eq	VA Product to RxNorm equivalent (NDF-RT)	0	1	RxNorm - VAProd eq	44818944
+VMP has prescr stat	VMP has prescribing status (SNOMED)	0	0	VMP prescr stat of	45905810
+VMP of	Virtual Medicinal Product of (SNOMED)	0	0	Has VMP	45905751
+VMP prescr stat of	VMP prescribing status of (SNOMED)	0	0	VMP has prescr stat	45905811
+VRP has prescr stat	VRP has prescribing status (SNOMED)	0	0	VRP prescr stat of	45905806
+VRP of	VRP of (SNOMED)	0	0	Has VRP	45905799
+VRP prescr stat of	VRP prescribing status of (SNOMED)	0	0	VRP has prescr stat	45905807
+Vaccine group of	Vaccine group of (CVX)	0	0	Has vaccine group	32610
+Value mapped from	Value_as_concept to non-standard map (OMOP)	0	0	Maps to value	44819242
+Value of	Value of	0	0	Has Value	32973
+Value to Schema	Value to Schema (NAACCR)	0	0	Schema to Value	32648
+Variable has date	Variable has date (NAACCR)	0	0	Date of variable	32658
+Variable to Schema	Variable to Schema (NAACCR)	0	0	Schema to Variable	32650
+Version contains	OMOP CDM Version contains table/field (OMOP)	1	0	Contained in version	32520
+Visit cat - PoS	Visit category to Place of Service (OMOP)	1	1	PoS - Visit cat	44818940
+\.
+
+
+--
+-- Data for Name: source_to_concept_map; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.source_to_concept_map (source_code, source_concept_id, source_vocabulary_id, source_code_description, target_concept_id, target_vocabulary_id, valid_start_date, valid_end_date, invalid_reason) FROM stdin;
+\.
+
+
+--
+-- Data for Name: specimen; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.specimen (specimen_id, person_id, specimen_concept_id, specimen_type_concept_id, specimen_date, specimen_datetime, quantity, unit_concept_id, anatomic_site_concept_id, disease_status_concept_id, specimen_source_id, specimen_source_value, unit_source_value, anatomic_site_source_value, disease_status_source_value) FROM stdin;
+\.
+
+
+--
+-- Data for Name: survey_conduct; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.survey_conduct (survey_conduct_id, person_id, survey_concept_id, survey_start_date, survey_start_datetime, survey_end_date, survey_end_datetime, provider_id, assisted_concept_id, respondent_type_concept_id, timing_concept_id, collection_method_concept_id, assisted_source_value, respondent_type_source_value, timing_source_value, collection_method_source_value, survey_source_value, survey_source_concept_id, survey_source_identifier, validated_survey_concept_id, validated_survey_source_value, survey_version_number, visit_occurrence_id, visit_detail_id, response_visit_occurrence_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: visit_detail; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.visit_detail (visit_detail_id, person_id, visit_detail_concept_id, visit_detail_start_date, visit_detail_start_datetime, visit_detail_end_date, visit_detail_end_datetime, visit_detail_type_concept_id, provider_id, care_site_id, discharge_to_concept_id, admitted_from_concept_id, admitted_from_source_value, visit_detail_source_value, visit_detail_source_concept_id, discharge_to_source_value, preceding_visit_detail_id, visit_detail_parent_id, visit_occurrence_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: visit_occurrence; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.visit_occurrence (visit_occurrence_id, person_id, visit_concept_id, visit_start_date, visit_start_datetime, visit_end_date, visit_end_datetime, visit_type_concept_id, provider_id, care_site_id, visit_source_value, visit_source_concept_id, admitted_from_concept_id, admitted_from_source_value, discharge_to_source_value, discharge_to_concept_id, preceding_visit_occurrence_id) FROM stdin;
+177	142	0	2004-01-23	2004-01-23 00:00:00	2004-01-23	2004-01-23 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+178	142	0	2008-09-26	2008-09-26 00:00:00	2008-09-26	2008-09-26 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+179	143	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+180	142	0	2004-07-21	2004-07-21 00:00:00	2004-07-21	2004-07-21 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+181	144	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+182	145	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+183	146	0	2004-01-23	2004-01-23 00:00:00	2004-01-23	2004-01-23 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+184	146	0	2008-09-26	2008-09-26 00:00:00	2008-09-26	2008-09-26 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+185	147	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+186	146	0	2004-07-21	2004-07-21 00:00:00	2004-07-21	2004-07-21 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+187	148	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+188	149	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+189	150	0	2004-01-23	2004-01-23 00:00:00	2004-01-23	2004-01-23 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+190	150	0	2008-09-26	2008-09-26 00:00:00	2008-09-26	2008-09-26 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+191	151	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+192	150	0	2004-07-21	2004-07-21 00:00:00	2004-07-21	2004-07-21 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+193	152	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+194	153	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+195	154	0	2004-01-23	2004-01-23 00:00:00	2004-01-23	2004-01-23 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+196	154	0	2008-09-26	2008-09-26 00:00:00	2008-09-26	2008-09-26 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+197	155	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+198	154	0	2004-07-21	2004-07-21 00:00:00	2004-07-21	2004-07-21 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+199	156	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+200	157	0	2004-09-01	2004-09-01 00:00:00	2004-09-01	2004-09-01 00:00:00	0	\N	\N	\N	0	0	\N	\N	0	\N
+\.
+
+
+--
+-- Data for Name: vocabulary; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.vocabulary (vocabulary_id, vocabulary_name, vocabulary_reference, vocabulary_version, vocabulary_concept_id) FROM stdin;
+CDM	OMOP Common DataModel	https://github.com/OHDSI/CommonDataModel	CDM v6.0.2	32485
+Cohort Type	OMOP Cohort Type	OMOP generated	\N	44819234
+Concept Class	OMOP Concept Class	OMOP generated	\N	44819233
+Condition Status	OMOP Condition Status	OMOP generated	\N	32887
+Condition Type	OMOP Condition Occurrence Type	OMOP generated	\N	44819127
+Cost	OMOP Cost	OMOP generated	\N	581457
+Cost Type	OMOP Cost Type	OMOP generated	\N	5029
+Death Type	OMOP Death Type	OMOP generated	\N	44819135
+Device Type	OMOP Device Type	OMOP generated	\N	44819151
+Domain	OMOP Domain	OMOP generated	\N	44819147
+Drug Type	OMOP Drug Exposure Type	OMOP generated	\N	44819126
+Episode	OMOP Episode	OMOP generated	Episode 20201014	32523
+Gender	OMOP Gender	OMOP generated	\N	44819108
+Korean Revenue Code	Korean Revenue Code	OMOP generated	\N	32724
+Meas Type	OMOP Measurement Type	OMOP generated	\N	44819152
+Metadata	Metadata	OMOP generated	\N	32675
+None	OMOP Standardized Vocabularies	OMOP generated	v5.0 26-FEB-21	44819096
+Note Type	OMOP Note Type	OMOP generated	\N	44819146
+OSM	OpenStreetMap	https://www.openstreetmap.org/copyright/en, https://wambachers-osm.website/boundaries/	OSM Release 2019-02-21	32541
+Obs Period Type	OMOP Observation Period Type	OMOP generated	\N	44819149
+Observation Type	OMOP Observation Type	OMOP generated	\N	44819129
+PHDSC	Source of Payment Typology (PHDSC)	http://www.phdsc.org/standards/payer-typology-source.asp	Version 3.0	32473
+Plan	Health Plan - contract to administer healthcare transactions by the payer, facilitated by the sponsor	OMOP generated	\N	32471
+Plan Stop Reason	Plan Stop Reason - Reason for termination of the Health Plan	OMOP generated	\N	32474
+Procedure Type	OMOP Procedure Occurrence Type	OMOP generated	\N	44819128
+Relationship	OMOP Relationship	OMOP generated	\N	44819235
+SNOMED	Systematic Nomenclature of Medicine - Clinical Terms (IHTSDO)	http://www.nlm.nih.gov/research/umls/licensedcontent/umlsknowledgesources.html	2020-07-31 SNOMED CT International Edition; 2020-09-01 SNOMED CT US Edition; 2020-10-28 SNOMED CT UK Edition	44819097
+Sponsor	Sponsor - institution or individual financing healthcare transactions	OMOP generated	\N	32472
+Type Concept	OMOP Type Concept	OMOP generated	Type Concept 20210212	32808
+UB04 Point of Origin	UB04 Claim Source Inpatient Admission Code (CMS)	https://www.resdac.org/cms-data/variables/Claim-Source-Inpatient-Admission-Code	\N	32045
+UB04 Pri Typ of Adm	UB04 Claim Inpatient Admission Type Code (CMS)	https://www.resdac.org/cms-data/variables/Claim-Inpatient-Admission-Type-Code	\N	32046
+UB04 Pt dis status	UB04 Patient Discharge Status Code (CMS)	https://www.resdac.org/cms-data/variables/patient-discharge-status-code	\N	32047
+UB04 Typ bill	UB04 Type of Bill - Institutional (USHIK)	https://ushik.ahrq.gov/ViewItemDetails?&system=apcd&itemKey=196987000	\N	32044
+UCUM	Unified Code for Units of Measure (Regenstrief Institute)	http://aurora.regenstrief.org/~ucum/ucum.html#section-Alphabetic-Index	Version 1.8.2	44819107
+US Census	United States Census Bureau	https://www.census.gov/geo/maps-data/data/tiger-cart-boundary.html	US Census 2017 Release	32570
+Visit	OMOP Visit	OMOP generated	\N	44819119
+Visit Type	OMOP Visit Type	OMOP generated	\N	44819150
+Vocabulary	OMOP Vocabulary	OMOP generated	\N	44819232
+\.
+
+
+--
+-- Name: care_site_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.care_site_sequence', 56, true);
+
+
+--
+-- Name: condition_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.condition_sequence', 40, true);
+
+
+--
+-- Name: location_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.location_sequence', 66, true);
+
+
+--
+-- Name: measurement_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.measurement_sequence', 322, true);
+
+
+--
+-- Name: observation_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.observation_sequence', 890, true);
+
+
+--
+-- Name: person_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.person_sequence', 157, true);
+
+
+--
+-- Name: visit_occurrence_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.visit_occurrence_sequence', 200, true);
+
+
+--
+-- Name: ncdc2 ncdc2_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ncdc2
+    ADD CONSTRAINT ncdc2_pkey PRIMARY KEY (id, date);
+
+
+--
+-- Name: ncdc ncdc_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ncdc
+    ADD CONSTRAINT ncdc_pkey PRIMARY KEY (id, date);
+
+
+--
+-- Name: person_source_id person_source_id_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.person_source_id
+    ADD CONSTRAINT person_source_id_pkey PRIMARY KEY (person_id);
+
+
+--
+-- Name: care_site xpk_care_site; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.care_site
+    ADD CONSTRAINT xpk_care_site PRIMARY KEY (care_site_id);
+
+
+--
+-- Name: concept xpk_concept; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.concept
+    ADD CONSTRAINT xpk_concept PRIMARY KEY (concept_id);
+
+
+--
+-- Name: concept_ancestor xpk_concept_ancestor; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.concept_ancestor
+    ADD CONSTRAINT xpk_concept_ancestor PRIMARY KEY (ancestor_concept_id, descendant_concept_id);
+
+
+--
+-- Name: concept_class xpk_concept_class; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.concept_class
+    ADD CONSTRAINT xpk_concept_class PRIMARY KEY (concept_class_id);
+
+
+--
+-- Name: concept_relationship xpk_concept_relationship; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.concept_relationship
+    ADD CONSTRAINT xpk_concept_relationship PRIMARY KEY (concept_id_1, concept_id_2, relationship_id);
+
+
+--
+-- Name: condition_era xpk_condition_era; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.condition_era
+    ADD CONSTRAINT xpk_condition_era PRIMARY KEY (condition_era_id);
+
+
+--
+-- Name: condition_occurrence xpk_condition_occurrence; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.condition_occurrence
+    ADD CONSTRAINT xpk_condition_occurrence PRIMARY KEY (condition_occurrence_id);
+
+
+--
+-- Name: device_exposure xpk_device_exposure; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.device_exposure
+    ADD CONSTRAINT xpk_device_exposure PRIMARY KEY (device_exposure_id);
+
+
+--
+-- Name: domain xpk_domain; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.domain
+    ADD CONSTRAINT xpk_domain PRIMARY KEY (domain_id);
+
+
+--
+-- Name: dose_era xpk_dose_era; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.dose_era
+    ADD CONSTRAINT xpk_dose_era PRIMARY KEY (dose_era_id);
+
+
+--
+-- Name: drug_era xpk_drug_era; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drug_era
+    ADD CONSTRAINT xpk_drug_era PRIMARY KEY (drug_era_id);
+
+
+--
+-- Name: drug_exposure xpk_drug_exposure; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drug_exposure
+    ADD CONSTRAINT xpk_drug_exposure PRIMARY KEY (drug_exposure_id);
+
+
+--
+-- Name: drug_strength xpk_drug_strength; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drug_strength
+    ADD CONSTRAINT xpk_drug_strength PRIMARY KEY (drug_concept_id, ingredient_concept_id);
+
+
+--
+-- Name: location xpk_location; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.location
+    ADD CONSTRAINT xpk_location PRIMARY KEY (location_id);
+
+
+--
+-- Name: location_history xpk_location_history; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.location_history
+    ADD CONSTRAINT xpk_location_history PRIMARY KEY (location_history_id);
+
+
+--
+-- Name: measurement xpk_measurement; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.measurement
+    ADD CONSTRAINT xpk_measurement PRIMARY KEY (measurement_id);
+
+
+--
+-- Name: note xpk_note; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.note
+    ADD CONSTRAINT xpk_note PRIMARY KEY (note_id);
+
+
+--
+-- Name: note_nlp xpk_note_nlp; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.note_nlp
+    ADD CONSTRAINT xpk_note_nlp PRIMARY KEY (note_nlp_id);
+
+
+--
+-- Name: observation xpk_observation; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.observation
+    ADD CONSTRAINT xpk_observation PRIMARY KEY (observation_id);
+
+
+--
+-- Name: observation_period xpk_observation_period; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.observation_period
+    ADD CONSTRAINT xpk_observation_period PRIMARY KEY (observation_period_id);
+
+
+--
+-- Name: payer_plan_period xpk_payer_plan_period; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.payer_plan_period
+    ADD CONSTRAINT xpk_payer_plan_period PRIMARY KEY (payer_plan_period_id);
+
+
+--
+-- Name: person xpk_person; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.person
+    ADD CONSTRAINT xpk_person PRIMARY KEY (person_id);
+
+
+--
+-- Name: procedure_occurrence xpk_procedure_occurrence; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.procedure_occurrence
+    ADD CONSTRAINT xpk_procedure_occurrence PRIMARY KEY (procedure_occurrence_id);
+
+
+--
+-- Name: provider xpk_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.provider
+    ADD CONSTRAINT xpk_provider PRIMARY KEY (provider_id);
+
+
+--
+-- Name: relationship xpk_relationship; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.relationship
+    ADD CONSTRAINT xpk_relationship PRIMARY KEY (relationship_id);
+
+
+--
+-- Name: source_to_concept_map xpk_source_to_concept_map; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.source_to_concept_map
+    ADD CONSTRAINT xpk_source_to_concept_map PRIMARY KEY (source_vocabulary_id, target_concept_id, source_code, valid_end_date);
+
+
+--
+-- Name: specimen xpk_specimen; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.specimen
+    ADD CONSTRAINT xpk_specimen PRIMARY KEY (specimen_id);
+
+
+--
+-- Name: survey_conduct xpk_survey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.survey_conduct
+    ADD CONSTRAINT xpk_survey PRIMARY KEY (survey_conduct_id);
+
+
+--
+-- Name: cost xpk_visit_cost; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.cost
+    ADD CONSTRAINT xpk_visit_cost PRIMARY KEY (cost_id);
+
+
+--
+-- Name: visit_detail xpk_visit_detail; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.visit_detail
+    ADD CONSTRAINT xpk_visit_detail PRIMARY KEY (visit_detail_id);
+
+
+--
+-- Name: visit_occurrence xpk_visit_occurrence; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.visit_occurrence
+    ADD CONSTRAINT xpk_visit_occurrence PRIMARY KEY (visit_occurrence_id);
+
+
+--
+-- Name: vocabulary xpk_vocabulary; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.vocabulary
+    ADD CONSTRAINT xpk_vocabulary PRIMARY KEY (vocabulary_id);
+
+
+--
+-- Name: idx_concept_ancestor_id_1; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_ancestor_id_1 ON public.concept_ancestor USING btree (ancestor_concept_id);
+
+ALTER TABLE public.concept_ancestor CLUSTER ON idx_concept_ancestor_id_1;
+
+
+--
+-- Name: idx_concept_ancestor_id_2; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_ancestor_id_2 ON public.concept_ancestor USING btree (descendant_concept_id);
+
+
+--
+-- Name: idx_concept_class_class_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_concept_class_class_id ON public.concept_class USING btree (concept_class_id);
+
+ALTER TABLE public.concept_class CLUSTER ON idx_concept_class_class_id;
+
+
+--
+-- Name: idx_concept_class_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_class_id ON public.concept USING btree (concept_class_id);
+
+
+--
+-- Name: idx_concept_code; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_code ON public.concept USING btree (concept_code);
+
+
+--
+-- Name: idx_concept_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_concept_concept_id ON public.concept USING btree (concept_id);
+
+ALTER TABLE public.concept CLUSTER ON idx_concept_concept_id;
+
+
+--
+-- Name: idx_concept_domain_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_domain_id ON public.concept USING btree (domain_id);
+
+
+--
+-- Name: idx_concept_id_varchar; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_id_varchar ON public.concept USING btree (((concept_id)::character varying));
+
+
+--
+-- Name: idx_concept_relationship_id_1; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_relationship_id_1 ON public.concept_relationship USING btree (concept_id_1);
+
+
+--
+-- Name: idx_concept_relationship_id_2; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_relationship_id_2 ON public.concept_relationship USING btree (concept_id_2);
+
+
+--
+-- Name: idx_concept_relationship_id_3; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_relationship_id_3 ON public.concept_relationship USING btree (relationship_id);
+
+
+--
+-- Name: idx_concept_synonym_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_synonym_id ON public.concept_synonym USING btree (concept_id);
+
+ALTER TABLE public.concept_synonym CLUSTER ON idx_concept_synonym_id;
+
+
+--
+-- Name: idx_concept_vocabluary_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_concept_vocabluary_id ON public.concept USING btree (vocabulary_id);
+
+
+--
+-- Name: idx_condition_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_condition_concept_id ON public.condition_occurrence USING btree (condition_concept_id);
+
+
+--
+-- Name: idx_condition_era_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_condition_era_concept_id ON public.condition_era USING btree (condition_concept_id);
+
+
+--
+-- Name: idx_condition_era_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_condition_era_person_id ON public.condition_era USING btree (person_id);
+
+ALTER TABLE public.condition_era CLUSTER ON idx_condition_era_person_id;
+
+
+--
+-- Name: idx_condition_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_condition_person_id ON public.condition_occurrence USING btree (person_id);
+
+ALTER TABLE public.condition_occurrence CLUSTER ON idx_condition_person_id;
+
+
+--
+-- Name: idx_condition_visit_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_condition_visit_id ON public.condition_occurrence USING btree (visit_occurrence_id);
+
+
+--
+-- Name: idx_cost_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_cost_person_id ON public.cost USING btree (person_id);
+
+ALTER TABLE public.cost CLUSTER ON idx_cost_person_id;
+
+
+--
+-- Name: idx_device_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_device_concept_id ON public.device_exposure USING btree (device_concept_id);
+
+
+--
+-- Name: idx_device_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_device_person_id ON public.device_exposure USING btree (person_id);
+
+ALTER TABLE public.device_exposure CLUSTER ON idx_device_person_id;
+
+
+--
+-- Name: idx_device_visit_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_device_visit_id ON public.device_exposure USING btree (visit_occurrence_id);
+
+
+--
+-- Name: idx_domain_domain_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_domain_domain_id ON public.domain USING btree (domain_id);
+
+ALTER TABLE public.domain CLUSTER ON idx_domain_domain_id;
+
+
+--
+-- Name: idx_dose_era_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_dose_era_concept_id ON public.dose_era USING btree (drug_concept_id);
+
+
+--
+-- Name: idx_dose_era_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_dose_era_person_id ON public.dose_era USING btree (person_id);
+
+ALTER TABLE public.dose_era CLUSTER ON idx_dose_era_person_id;
+
+
+--
+-- Name: idx_drug_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_drug_concept_id ON public.drug_exposure USING btree (drug_concept_id);
+
+
+--
+-- Name: idx_drug_era_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_drug_era_concept_id ON public.drug_era USING btree (drug_concept_id);
+
+
+--
+-- Name: idx_drug_era_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_drug_era_person_id ON public.drug_era USING btree (person_id);
+
+ALTER TABLE public.drug_era CLUSTER ON idx_drug_era_person_id;
+
+
+--
+-- Name: idx_drug_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_drug_person_id ON public.drug_exposure USING btree (person_id);
+
+ALTER TABLE public.drug_exposure CLUSTER ON idx_drug_person_id;
+
+
+--
+-- Name: idx_drug_strength_id_1; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_drug_strength_id_1 ON public.drug_strength USING btree (drug_concept_id);
+
+ALTER TABLE public.drug_strength CLUSTER ON idx_drug_strength_id_1;
+
+
+--
+-- Name: idx_drug_strength_id_2; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_drug_strength_id_2 ON public.drug_strength USING btree (ingredient_concept_id);
+
+
+--
+-- Name: idx_drug_visit_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_drug_visit_id ON public.drug_exposure USING btree (visit_occurrence_id);
+
+
+--
+-- Name: idx_fact_relationship_id_1; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_fact_relationship_id_1 ON public.fact_relationship USING btree (domain_concept_id_1);
+
+
+--
+-- Name: idx_fact_relationship_id_2; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_fact_relationship_id_2 ON public.fact_relationship USING btree (domain_concept_id_2);
+
+
+--
+-- Name: idx_fact_relationship_id_3; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_fact_relationship_id_3 ON public.fact_relationship USING btree (relationship_concept_id);
+
+
+--
+-- Name: idx_measurement_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_measurement_concept_id ON public.measurement USING btree (measurement_concept_id);
+
+
+--
+-- Name: idx_measurement_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_measurement_person_id ON public.measurement USING btree (person_id);
+
+ALTER TABLE public.measurement CLUSTER ON idx_measurement_person_id;
+
+
+--
+-- Name: idx_measurement_visit_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_measurement_visit_id ON public.measurement USING btree (visit_occurrence_id);
+
+
+--
+-- Name: idx_note_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_note_concept_id ON public.note USING btree (note_type_concept_id);
+
+
+--
+-- Name: idx_note_nlp_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_note_nlp_concept_id ON public.note_nlp USING btree (note_nlp_concept_id);
+
+
+--
+-- Name: idx_note_nlp_note_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_note_nlp_note_id ON public.note_nlp USING btree (note_id);
+
+ALTER TABLE public.note_nlp CLUSTER ON idx_note_nlp_note_id;
+
+
+--
+-- Name: idx_note_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_note_person_id ON public.note USING btree (person_id);
+
+ALTER TABLE public.note CLUSTER ON idx_note_person_id;
+
+
+--
+-- Name: idx_note_visit_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_note_visit_id ON public.note USING btree (visit_occurrence_id);
+
+
+--
+-- Name: idx_observation_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_observation_concept_id ON public.observation USING btree (observation_concept_id);
+
+
+--
+-- Name: idx_observation_period_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_observation_period_id ON public.observation_period USING btree (person_id);
+
+ALTER TABLE public.observation_period CLUSTER ON idx_observation_period_id;
+
+
+--
+-- Name: idx_observation_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_observation_person_id ON public.observation USING btree (person_id);
+
+ALTER TABLE public.observation CLUSTER ON idx_observation_person_id;
+
+
+--
+-- Name: idx_observation_visit_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_observation_visit_id ON public.observation USING btree (visit_occurrence_id);
+
+
+--
+-- Name: idx_period_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_period_person_id ON public.payer_plan_period USING btree (person_id);
+
+ALTER TABLE public.payer_plan_period CLUSTER ON idx_period_person_id;
+
+
+--
+-- Name: idx_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_person_id ON public.person USING btree (person_id);
+
+ALTER TABLE public.person CLUSTER ON idx_person_id;
+
+
+--
+-- Name: idx_procedure_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_procedure_concept_id ON public.procedure_occurrence USING btree (procedure_concept_id);
+
+
+--
+-- Name: idx_procedure_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_procedure_person_id ON public.procedure_occurrence USING btree (person_id);
+
+ALTER TABLE public.procedure_occurrence CLUSTER ON idx_procedure_person_id;
+
+
+--
+-- Name: idx_procedure_visit_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_procedure_visit_id ON public.procedure_occurrence USING btree (visit_occurrence_id);
+
+
+--
+-- Name: idx_relationship_rel_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_relationship_rel_id ON public.relationship USING btree (relationship_id);
+
+ALTER TABLE public.relationship CLUSTER ON idx_relationship_rel_id;
+
+
+--
+-- Name: idx_source_to_concept_map_code; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_source_to_concept_map_code ON public.source_to_concept_map USING btree (source_code);
+
+
+--
+-- Name: idx_source_to_concept_map_id_1; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_source_to_concept_map_id_1 ON public.source_to_concept_map USING btree (source_vocabulary_id);
+
+
+--
+-- Name: idx_source_to_concept_map_id_2; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_source_to_concept_map_id_2 ON public.source_to_concept_map USING btree (target_vocabulary_id);
+
+
+--
+-- Name: idx_source_to_concept_map_id_3; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_source_to_concept_map_id_3 ON public.source_to_concept_map USING btree (target_concept_id);
+
+ALTER TABLE public.source_to_concept_map CLUSTER ON idx_source_to_concept_map_id_3;
+
+
+--
+-- Name: idx_specimen_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_specimen_concept_id ON public.specimen USING btree (specimen_concept_id);
+
+
+--
+-- Name: idx_specimen_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_specimen_person_id ON public.specimen USING btree (person_id);
+
+ALTER TABLE public.specimen CLUSTER ON idx_specimen_person_id;
+
+
+--
+-- Name: idx_survey_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_survey_person_id ON public.survey_conduct USING btree (person_id);
+
+ALTER TABLE public.survey_conduct CLUSTER ON idx_survey_person_id;
+
+
+--
+-- Name: idx_visit_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_visit_concept_id ON public.visit_occurrence USING btree (visit_concept_id);
+
+
+--
+-- Name: idx_visit_detail_concept_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_visit_detail_concept_id ON public.visit_detail USING btree (visit_detail_concept_id);
+
+
+--
+-- Name: idx_visit_detail_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_visit_detail_person_id ON public.visit_detail USING btree (person_id);
+
+ALTER TABLE public.visit_detail CLUSTER ON idx_visit_detail_person_id;
+
+
+--
+-- Name: idx_visit_person_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_visit_person_id ON public.visit_occurrence USING btree (person_id);
+
+ALTER TABLE public.visit_occurrence CLUSTER ON idx_visit_person_id;
+
+
+--
+-- Name: idx_vocabulary_vocabulary_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_vocabulary_vocabulary_id ON public.vocabulary USING btree (vocabulary_id);
+
+ALTER TABLE public.vocabulary CLUSTER ON idx_vocabulary_vocabulary_id;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

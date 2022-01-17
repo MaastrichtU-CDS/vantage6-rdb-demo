@@ -8,8 +8,8 @@ EOSQL
 
 if [[ $OMOP_CDM = True ]]
 then
-    psql -v ON_ERROR_STOP=1 --username postgres --dbname "MaastroDB" < '/mnt/data/maastro.psql'
-    psql -v ON_ERROR_STOP=1 --username postgres --dbname "MumcDB" < '/mnt/data/mumc.psql'
+    psql -v ON_ERROR_STOP=1 --username postgres --dbname "MaastroDB" < '/mnt/data/omop.psql'
+    psql -v ON_ERROR_STOP=1 --username postgres --dbname "MumcDB" < '/mnt/data/omop.psql'
 else
 	psql -v ON_ERROR_STOP=1 --username postgres --dbname "MaastroDB" <<-EOSQL
         DROP TABLE IF EXISTS "records";
