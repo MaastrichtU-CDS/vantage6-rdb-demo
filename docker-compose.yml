@@ -14,14 +14,14 @@ services:
     networks:
       - vantage6_server
 
-  adminer:
-    image: adminer
-    ports:
-      - 8080:8080
-    depends_on:
-      - db
-    networks:
-      - vantage6_server
+  # adminer:
+  #   image: adminer
+  #   ports:
+  #     - 8080:8080
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - vantage6_server
 
   server:
     container_name: vantage6_server
@@ -48,15 +48,16 @@ services:
 
   maastro-user:
     container_name: vantage6-maastro-user
-    image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
-    #image: pmateus/vantage6-node-whitelisted:1.0.0
+    image: pmateus/vantage6-node-whitelisted:1.0.0
     environment:
       - DATA_VOLUME_NAME=datavol-maastro
+      - DATABASE_URI=/database.csv
     volumes:
       - datavol-maastro:/mnt/data
       - $PWD/maastro/log:/mnt/log
       - $PWD/maastro/config:/mnt/config
       - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/maastro/data/dataset.csv:/database.csv
     entrypoint: ["vnode-local", "start", "-c", "/mnt/config/maastro.yaml", "--dockerized"]
     networks:
       - vantage6_server
@@ -66,15 +67,16 @@ services:
 
   mumc-user:
     container_name: vantage6-mumc-user
-    image: harbor.distributedlearning.ai/infrastructure/node:2.1.0
-    #image: pmateus/vantage6-node-whitelisted:1.0.0
+    image: pmateus/vantage6-node-whitelisted:1.0.0
     environment:
       - DATA_VOLUME_NAME=datavol-mumc
+      - DATABASE_URI=/database.csv
     volumes:
       - datavol-mumc:/mnt/data
       - $PWD/mumc/log:/mnt/log
       - $PWD/mumc/config:/mnt/config
       - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/mumc/data/dataset.csv:/database.csv
     entrypoint: ["vnode-local", "start", "-c", "/mnt/config/mumc.yaml", "--dockerized"]
     networks:
       - vantage6_server

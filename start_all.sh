@@ -37,22 +37,22 @@ sleep 5
 docker exec -it vantage6_server vserver-local import -c /config.yaml /init.yaml
 
 # Connecting the datatabase container to the algorithm container's network
-networks=("vantage6-mumc-user-net" "vantage6-maastro-user-net")
-for network in "${networks[@]}"; do
-    i="0"
-    echo "Connecting the database to network ${network}..."
-    while [ $i -eq 0 ]
-    do
-        sleep 2
-        if [[ ! -z `docker network ls -f name=${network} --format '{{.Name}}'` ]]
-        then
-            docker network connect $network vantage6-rdb
-            echo "Successfully connected"
-            i=$[$i+1]
-        else
-            echo "Network still not ready, trying again in 2 seconds..."
-        fi
-    done
-done
+# networks=("vantage6-mumc-user-net" "vantage6-maastro-user-net")
+# for network in "${networks[@]}"; do
+#     i="0"
+#     echo "Connecting the database to network ${network}..."
+#     while [ $i -eq 0 ]
+#     do
+#         sleep 2
+#         if [[ ! -z `docker network ls -f name=${network} --format '{{.Name}}'` ]]
+#         then
+#             docker network connect $network vantage6-rdb
+#             echo "Successfully connected"
+#             i=$[$i+1]
+#         else
+#             echo "Network still not ready, trying again in 2 seconds..."
+#         fi
+#     done
+# done
 
 echo "Set-up finished"
