@@ -23,6 +23,14 @@ organizations:
     zipcode: "6229ET"
     country: "Netherlands"
     public_key: ""
+  -
+    name: "University of Minho"
+    domain: "um.pt"
+    address1: "UM"
+    address2: "Braga"
+    zipcode: "4700"
+    country: "Portugal"
+    public_key: ""
 
 collaborations:
   -
@@ -35,3 +43,6 @@ collaborations:
       -
         name: "Maastricht University Medical Center"
         api-key: "414a303e-d035-11ea-9365-0242ac110002"
+      -
+        name: "University of Minho"
+        api-key: "7f77bdff-1045-470b-af6b-36d418ae445c"

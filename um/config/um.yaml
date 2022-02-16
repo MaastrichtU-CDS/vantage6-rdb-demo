@@ -1,0 +1,37 @@
+application:
+    api_key: 7f77bdff-1045-470b-af6b-36d418ae445c
+    api_path: /api
+    databases:
+        default: /mnt/database.csv
+    encryption:
+        enabled: false
+        # private_key: /mnt/config/private_key.pem
+    logging:
+        backup_count: 5
+        datefmt: '%Y-%m-%d %H:%M:%S'
+        file: um_test.log
+        format: '%(asctime)s - %(name)-14s - %(levelname)-8s - %(message)s'
+        level: DEBUG
+        max_size: 1024
+        use_console: true
+    port: '5000'
+    server_url: http://vantage6_server
+    task_dir: tasks
+    environments:
+    algorithm_env:
+        PGUSER: postgres
+        PGPASSWORD: password
+        PGDATABASE: UmDB
+        PGPORT: 5432
+        PGHOST: vantage6-rdb
+        OC_SERVER: https://api.dsri2.unimaas.nl:6443
+        OC_TOKEN: eyJhbGciOiJSUzI1NiIsImtpZCI6IlJnQVUyRHVLUTN6WWtHWkpBWUFUeHdlNkRPZkFVRklxZzIwcElVXy1uWVkifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJuY2RjLXBodCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJwaHQtdG9rZW4tbXJ6YnciLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoicGh0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNDYwNmI0MTctOTI1Zi00ZWNiLWExODAtNGE2NzQ4MTQ0MGIwIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Om5jZGMtcGh0OnBodCJ9.r7bAfK5O8e4KVaWwAoeXSp4b6bVdiQuWiNCHrApikEB0ZaLDrJiaXS1-Go_6NL4Nk_m2yGWyE1N7V21g-Ff-m4weACf_1J0fB9IITyXy3SZN7s1zRdA2cEJdJc-mc5MAv9uIwmAMwfjNJ3c7TOFaHcRoM7-sHUEmoSGWDJ6gdgdcJWXTfaO0f3Ff8aUYUrUXfbQy1UPE3nDj9LHh_Er62rFDLNVLDLdESeNQkG3M0fyUwTeAwTYr3N4qnUxFnVgaldnOjOZnmfVMimRWodL2SdkWmk0-ccTHYAPHRxFM6Po4_A2HsN75abEPNlNPdG0pz8jJWC9i8JTFZn7l2OzfrA
+        TABLE_MINIMUM: 2
+        COUNT_MINIMUM: 2
+        BIN_WIDTH_MINIMUM: 1
+    docker_images_placeholders:
+        gpu_image: pmateus/ncdc-maastricht-wrapper:1.0.0
+    acc: {}
+    dev: {}
+    prod: {}
+    test: {}

@@ -21,6 +21,16 @@ mumc = db.Organization(
 )
 mumc.save()
 
+um = db.Organization(
+    name="University of Minho",
+    domain="um.pt",
+    address1="UM",
+    address2="Braga",
+    zipcode="4700",
+    country="Portugal"
+)
+um.save()
+
 # create the new users
 new_user = db.User(
     username="researcher",
@@ -38,7 +48,7 @@ new_user.save()
 collaboration = db.Collaboration(
     name="demo-maastro-mumc", 
     encrypted=False,
-    organizations=[maastro, mumc]
+    organizations=[maastro, mumc, um]
 )
 
 # store the collaboration in the database
@@ -63,3 +73,12 @@ nodeMumc = db.Node(
 
 nodeMumc.save()
 #print("api MUMC: %s" % nodeMumc.api_key)
+
+nodeUm = db.Node(
+    name = f"UM Node - Collaboration {collaboration.name}",
+    organization = um,
+    collaboration = collaboration,
+    api_key = "7f77bdff-1045-470b-af6b-36d418ae445c"#str(uuid1())
+)
+
+nodeUm.save()

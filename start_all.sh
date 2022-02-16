@@ -29,6 +29,7 @@ fi
 
 docker volume create datavol-mumc
 docker volume create datavol-maastro
+docker volume create datavol-um
 
 docker-compose -f docker-compose.yml up -d
 

@@ -48,7 +48,7 @@ services:
 
   maastro-user:
     container_name: vantage6-maastro-user
-    image: pmateus/vantage6-node-whitelisted:1.0.0
+    image: pmateus/vantage6-node-whitelisted:2.0.1
     environment:
       - DATA_VOLUME_NAME=datavol-maastro
       - DATABASE_URI=/database.csv
@@ -57,7 +57,8 @@ services:
       - $PWD/maastro/log:/mnt/log
       - $PWD/maastro/config:/mnt/config
       - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/maastro/data/dataset.csv:/database.csv
+      - $PWD/maastro/data/Chest_clinic_1.csv:/database.csv
+      #- $PWD/mumc/data/dataset.csv:/database.csv
     entrypoint: ["vnode-local", "start", "-c", "/mnt/config/maastro.yaml", "--dockerized"]
     networks:
       - vantage6_server
@@ -67,7 +68,7 @@ services:
 
   mumc-user:
     container_name: vantage6-mumc-user
-    image: pmateus/vantage6-node-whitelisted:1.0.0
+    image: pmateus/vantage6-node-whitelisted:2.0.1
     environment:
       - DATA_VOLUME_NAME=datavol-mumc
       - DATABASE_URI=/database.csv
@@ -76,8 +77,29 @@ services:
       - $PWD/mumc/log:/mnt/log
       - $PWD/mumc/config:/mnt/config
       - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/mumc/data/dataset.csv:/database.csv
+      - $PWD/mumc/data/Chest_clinic_2.csv:/database.csv
+      #- $PWD/mumc/data/dataset.csv:/database.csv
     entrypoint: ["vnode-local", "start", "-c", "/mnt/config/mumc.yaml", "--dockerized"]
+    networks:
+      - vantage6_server
+    depends_on: 
+      - server
+    restart: unless-stopped
+
+  um-user:
+    container_name: vantage6-um-user
+    image: pmateus/vantage6-node-whitelisted:2.0.1
+    environment:
+      - DATA_VOLUME_NAME=datavol-um
+      - DATABASE_URI=/database.csv
+    volumes:
+      - datavol-um:/mnt/data
+      - $PWD/um/log:/mnt/log
+      - $PWD/um/config:/mnt/config
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/um/data/Chest_clinic_3.csv:/database.csv
+      #- $PWD/mumc/data/dataset.csv:/database.csv
+    entrypoint: ["vnode-local", "start", "-c", "/mnt/config/um.yaml", "--dockerized"]
     networks:
       - vantage6_server
     depends_on: 
@@ -88,6 +110,8 @@ volumes:
   datavol-maastro:
     external: true
   datavol-mumc:
+    external: true
+  datavol-um:
     external: true
 
 networks:
